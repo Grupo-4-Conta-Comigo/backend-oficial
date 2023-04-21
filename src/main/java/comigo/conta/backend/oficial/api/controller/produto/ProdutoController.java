@@ -5,6 +5,10 @@ import comigo.conta.backend.oficial.service.produto.ProdutoService;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoCriacaoDto;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoGetDto;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoUpdateDto;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +26,27 @@ public class ProdutoController {
         this.service = service;
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PostMapping("/criar/{idRestaurante}")
     public ResponseEntity<Produto> criar(
             @RequestBody @Validated ProdutoCriacaoDto produtoCriacaoDto,
@@ -30,12 +55,54 @@ public class ProdutoController {
         return ResponseEntity.status(201).body(this.service.criar(produtoCriacaoDto, idRestaurante));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "204",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @GetMapping("/{idRestaurante}")
     public ResponseEntity<List<ProdutoGetDto>> get(@PathVariable String idRestaurante) {
         final var allProdutos = service.getAll(idRestaurante).stream().map(ProdutoGetDto::new).toList();
         return allProdutos.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(allProdutos);
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PutMapping("/editar/{idRestaurante}")
     public ResponseEntity<ProdutoGetDto> update(
             @RequestBody @Validated ProdutoUpdateDto produtoUpdateDto,
@@ -45,6 +112,23 @@ public class ProdutoController {
         return ResponseEntity.ok(new ProdutoGetDto(savedProduto));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @DeleteMapping("/{idProduto}")
     public ResponseEntity<Void> delete(@PathVariable String idProduto) {
         this.service.delete(idProduto);

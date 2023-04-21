@@ -4,8 +4,6 @@ import comigo.conta.backend.oficial.domain.pedido.Pedido;
 import comigo.conta.backend.oficial.service.pedido.PedidoService;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoCriacaoDto;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoUpdateDto;
-import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
-import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.ItemComandaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,10 +34,18 @@ public class PedidoController {
     @GetMapping("/{idRestaurante}")
     public ResponseEntity<List<Pedido>> getAll(
             @PathVariable String idRestaurante,
-            @RequestParam("ativo") Optional<Boolean> active
+            @RequestParam("ativos") Optional<Boolean> ativos
     ) {
-        final var pedidos = pedidoService.getAll(idRestaurante, active);
+        final var pedidos = pedidoService.getAll(idRestaurante, ativos);
         return pedidos.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(pedidos);
+    }
+
+    @GetMapping("/count/{idRestaurante}")
+    public ResponseEntity<Long> count(
+            @PathVariable String idRestaurante,
+            @RequestParam("ativos") Optional<Boolean> ativos
+    ) {
+        return ResponseEntity.ok(pedidoService.count(idRestaurante, ativos));
     }
 
     @PutMapping("/editar/{idPedido}")
@@ -50,7 +56,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.editar(idPedido, pedidoCriacaoDto));
     }
 
-    @PutMapping("/finalizar/{idPedido}")
+    @PatchMapping("/finalizar/{idPedido}")
     public ResponseEntity<Pedido> finzalizar(@PathVariable String idPedido) {
         return ResponseEntity.ok(pedidoService.finalizar(idPedido));
     }

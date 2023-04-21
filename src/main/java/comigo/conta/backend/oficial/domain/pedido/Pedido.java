@@ -6,6 +6,7 @@ import comigo.conta.backend.oficial.domain.shared.Status;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,8 +18,10 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido")
     private List<Comanda> comandas;
     private String idRestaurante;
+    private LocalDateTime dataCriacao;
 
     public Pedido() {
+        dataCriacao = LocalDateTime.now();
     }
 
     public Pedido(int mesa, Status status, String idRestaurante) {
@@ -72,5 +75,9 @@ public class Pedido {
 
     public void setComandas(List<Comanda> comandas) {
         this.comandas = comandas;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
     }
 }

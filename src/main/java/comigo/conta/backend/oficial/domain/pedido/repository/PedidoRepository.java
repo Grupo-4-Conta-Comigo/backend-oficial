@@ -10,4 +10,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, String> {
     List<Pedido> findAllByIdRestauranteAndStatus(String idRestaurante, Status status);
 
     List<Pedido> findAllByIdRestaurante(String idRestaurante);
+
+    Long countByIdRestauranteAndStatus(String idRestaurante, Status status);
+
+    Long countByIdRestaurante(String idRestaurante);
 }

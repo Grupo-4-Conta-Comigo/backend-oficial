@@ -1,6 +1,7 @@
 package comigo.conta.backend.oficial.service.pedido.dto;
 
 import comigo.conta.backend.oficial.domain.shared.Status;
+import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
 
 import java.util.List;
 

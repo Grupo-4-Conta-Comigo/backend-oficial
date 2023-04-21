@@ -42,4 +42,8 @@ public class ItemComanda {
     public void setProduto(Produto produto) {
         this.produto = produto;
     }
+
+    public void setComanda(Comanda comanda) {
+        this.comanda = comanda;
+    }
 }

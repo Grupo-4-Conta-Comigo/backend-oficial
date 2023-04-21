@@ -26,6 +26,9 @@ public class PedidoService {
     }
 
     public Pedido criar(PedidoCriacaoDto pedidoCriacaoDto, String idRestaurante) {
+        if (!restauranteService.existe(idRestaurante)) {
+            throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
+        }
         final Pedido novoPedido = pedidoCriacaoDto.toEntity();
 
         final String id = generateRandomIdUsecase.execute();
@@ -73,5 +76,19 @@ public class PedidoService {
         }
 
         repository.deleteById(idPedido);
+    }
+
+    public boolean existe(String idPedido) {
+        return repository.existsById(idPedido);
+    }
+
+    public Long count(String idRestaurante, Optional<Boolean> ativos) {
+        if (!restauranteService.existe(idRestaurante)) {
+            throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
+        }
+        if (ativos.isPresent()) {
+            return repository.countByIdRestauranteAndStatus(idRestaurante, ativos.get() ? Status.ativo : Status.finalizado);
+        }
+        return repository.countByIdRestaurante(idRestaurante);
     }
 }

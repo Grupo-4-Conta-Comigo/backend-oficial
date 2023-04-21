@@ -1,7 +1,6 @@
 package comigo.conta.backend.oficial.api.controller.pedido;
 
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
-import comigo.conta.backend.oficial.service.pedido.PedidoService;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaCriacaoDto;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaUpdateDto;
@@ -23,7 +22,7 @@ import java.util.Optional;
 public class ComandaController {
     private final ComandaService comandaService;
 
-    public ComandaController(ComandaService comandaService, PedidoService pedidoService) {
+    public ComandaController(ComandaService comandaService) {
         this.comandaService = comandaService;
     }
 
@@ -133,7 +132,7 @@ public class ComandaController {
     public ResponseEntity<Comanda> putComanda(
             @PathVariable String idComanda,
             @RequestBody ComandaUpdateDto comandaUpdateDto
-            ) {
+    ) {
         return ResponseEntity.ok(this.comandaService.editar(idComanda, comandaUpdateDto));
     }
 

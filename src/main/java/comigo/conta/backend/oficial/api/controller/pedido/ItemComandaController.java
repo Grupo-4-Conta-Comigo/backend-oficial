@@ -3,6 +3,7 @@ package comigo.conta.backend.oficial.api.controller.pedido;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.ItemComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/itens-comanda")
+@Tag(name = "Itens das Comandas", description = "Grupo de requisições dos Itens das Comandas")
 public class ItemComandaController {
     private final ItemComandaService itemComandaService;
 

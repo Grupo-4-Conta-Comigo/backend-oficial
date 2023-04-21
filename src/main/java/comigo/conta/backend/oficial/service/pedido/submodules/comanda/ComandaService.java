@@ -4,6 +4,7 @@ import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.repository.ComandaRepository;
 import comigo.conta.backend.oficial.domain.shared.Status;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
+import comigo.conta.backend.oficial.domain.shared.usecases.GetPriceFromComandaUsecase;
 import comigo.conta.backend.oficial.service.pedido.PedidoService;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaCriacaoDto;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaUpdateDto;
@@ -17,11 +18,13 @@ import java.util.Optional;
 public class ComandaService {
     private final ComandaRepository comandaRepository;
     private final PedidoService pedidoService;
+    private final GetPriceFromComandaUsecase getPriceFromComandaUsecase;
     private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public ComandaService(ComandaRepository comandaRepository, PedidoService pedidoService, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public ComandaService(ComandaRepository comandaRepository, PedidoService pedidoService, GetPriceFromComandaUsecase getPriceFromComandaUsecase, GenerateRandomIdUsecase generateRandomIdUsecase) {
         this.comandaRepository = comandaRepository;
         this.pedidoService = pedidoService;
+        this.getPriceFromComandaUsecase = getPriceFromComandaUsecase;
         this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
@@ -86,5 +89,9 @@ public class ComandaService {
 
     public boolean existsById(String idComanda) {
         return comandaRepository.existsById(idComanda);
+    }
+
+    public double getPreco(String idComanda) {
+        return getPriceFromComandaUsecase.execute(getComandaOrThrow404(idComanda));
     }
 }

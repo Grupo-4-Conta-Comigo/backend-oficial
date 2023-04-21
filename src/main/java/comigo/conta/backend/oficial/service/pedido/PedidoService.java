@@ -4,6 +4,7 @@ import comigo.conta.backend.oficial.domain.pedido.Pedido;
 import comigo.conta.backend.oficial.domain.pedido.repository.PedidoRepository;
 import comigo.conta.backend.oficial.domain.shared.Status;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
+import comigo.conta.backend.oficial.domain.shared.usecases.GetPriceFromPedidoUsecase;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoCriacaoDto;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoUpdateDto;
 import comigo.conta.backend.oficial.service.restaurante.RestauranteService;
@@ -17,18 +18,18 @@ import java.util.Optional;
 public class PedidoService {
     private final PedidoRepository repository;
     private final RestauranteService restauranteService;
+    private final GetPriceFromPedidoUsecase getPriceFromPedidoUsecase;
     private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public PedidoService(PedidoRepository repository, RestauranteService restauranteService, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public PedidoService(PedidoRepository repository, RestauranteService restauranteService, GetPriceFromPedidoUsecase getPriceFromPedidoUsecase, GenerateRandomIdUsecase generateRandomIdUsecase) {
         this.repository = repository;
         this.restauranteService = restauranteService;
+        this.getPriceFromPedidoUsecase = getPriceFromPedidoUsecase;
         this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
     public Pedido criar(PedidoCriacaoDto pedidoCriacaoDto, String idRestaurante) {
-        if (!restauranteService.existe(idRestaurante)) {
-            throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
-        }
+        verificaRestauranteExiste(idRestaurante);
         final Pedido novoPedido = pedidoCriacaoDto.toEntity();
 
         final String id = generateRandomIdUsecase.execute();
@@ -39,9 +40,7 @@ public class PedidoService {
     }
 
     public List<Pedido> getAll(String idRestaurante, Optional<Boolean> active) {
-        if (!restauranteService.existe(idRestaurante)) {
-            throw new ResponseStatusException(404, "Restaurante não existe!", null);
-        }
+        verificaRestauranteExiste(idRestaurante);
         if (active.isEmpty()) {
             return repository.findAllByIdRestaurante(idRestaurante);
         }
@@ -49,10 +48,20 @@ public class PedidoService {
         return repository.findAllByIdRestauranteAndStatus(idRestaurante, active.get() ? Status.ativo : Status.finalizado);
     }
 
+    public double getPreco(String idPedido) {
+        return getPriceFromPedidoUsecase.execute(getPedidoOrElseThrow(idPedido));
+    }
+
+    public Long count(String idRestaurante, Optional<Boolean> ativos) {
+        verificaRestauranteExiste(idRestaurante);
+        if (ativos.isPresent()) {
+            return repository.countByIdRestauranteAndStatus(idRestaurante, ativos.get() ? Status.ativo : Status.finalizado);
+        }
+        return repository.countByIdRestaurante(idRestaurante);
+    }
+
     public Pedido editar(String idPedido, PedidoUpdateDto pedidoUpdateDto) {
-        final Pedido pedidoExistente = repository.findById(idPedido).orElseThrow(
-                () -> new ResponseStatusException(404, "Pedido não encontrado...", null)
-        );
+        final Pedido pedidoExistente = getPedidoOrElseThrow(idPedido);
 
         pedidoExistente.setMesa(pedidoUpdateDto.getMesa());
         pedidoExistente.setStatus(pedidoUpdateDto.getStatus());
@@ -61,20 +70,13 @@ public class PedidoService {
     }
 
     public Pedido finalizar(String idPedido) {
-        final Pedido pedidoExistente = repository.findById(idPedido).orElseThrow(
-                () -> new ResponseStatusException(404, "Pedido não encontrado...", null)
-        );
-
+        final Pedido pedidoExistente = getPedidoOrElseThrow(idPedido);
         pedidoExistente.setStatus(Status.finalizado);
-
         return repository.save(pedidoExistente);
     }
 
     public void deletar(String idPedido) {
-        if (!repository.existsById(idPedido)) {
-            throw new ResponseStatusException(404, "Pedido não encontrado...", null);
-        }
-
+        verificaPedidoExiste(idPedido);
         repository.deleteById(idPedido);
     }
 
@@ -82,13 +84,19 @@ public class PedidoService {
         return repository.existsById(idPedido);
     }
 
-    public Long count(String idRestaurante, Optional<Boolean> ativos) {
+    private Pedido getPedidoOrElseThrow(String idPedido) {
+        return repository.findById(idPedido).orElseThrow(() -> new ResponseStatusException(404, "Pedido não encontrado...", null));
+    }
+
+    private void verificaRestauranteExiste(final String idRestaurante) {
         if (!restauranteService.existe(idRestaurante)) {
             throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
         }
-        if (ativos.isPresent()) {
-            return repository.countByIdRestauranteAndStatus(idRestaurante, ativos.get() ? Status.ativo : Status.finalizado);
+    }
+
+    private void verificaPedidoExiste(final String idPedido) {
+        if (!existe(idPedido)) {
+            throw new ResponseStatusException(404, "Pedido não encontrado...", null);
         }
-        return repository.countByIdRestaurante(idRestaurante);
     }
 }

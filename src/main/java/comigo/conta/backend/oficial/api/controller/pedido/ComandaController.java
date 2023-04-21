@@ -40,6 +40,11 @@ public class ComandaController {
         return comandas.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(comandas);
     }
 
+    @GetMapping("/preco/{idComanda}")
+    public ResponseEntity<Double> getPreco(@PathVariable String idComanda) {
+        return ResponseEntity.ok(comandaService.getPreco(idComanda));
+    }
+
     @PutMapping("/editar/{idComanda}")
     public ResponseEntity<Comanda> putComanda(
             @PathVariable String idComanda,

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -40,23 +41,21 @@ public class ProdutoService {
         return this.repository.findAllByIdRestaurante(idRestaurante);
     }
 
-    public Produto update(ProdutoUpdateDto produtoUpdateDto, String idRestaurante) {
-        final var produtoAntigo = this.repository
-                .findById(
-                        produtoUpdateDto.getId()
-                ).orElseThrow(
+    public Produto update(ProdutoUpdateDto produtoUpdateDto, String idPedido) {
+        final var produtoAtual = this.repository
+                .findById(idPedido)
+                .orElseThrow(
                         () -> new ResponseStatusException(
                                 404,
                                 "Produto não encontrado!",
                                 null
                         )
                 );
-        final var updatedProduto = ProdutoMapper.of(produtoUpdateDto, idRestaurante);
-        if (!produtoAntigo.getIdRestaurante().equals(updatedProduto.getIdRestaurante())) {
-            throw new ResponseStatusException(400, String.format("Produto com id %s não pertence ao restaurante com id %s", produtoAntigo.getId(), updatedProduto.getIdRestaurante()), null);
-        }
-        System.out.println(updatedProduto.getId());
-        return this.repository.save(updatedProduto);
+        produtoAtual.setCategoria(produtoUpdateDto.getCategoria());
+        produtoAtual.setNome(produtoUpdateDto.getNome());
+        produtoAtual.setPreco(produtoUpdateDto.getPreco());
+
+        return this.repository.save(produtoAtual);
     }
 
     public void delete(String idProduto) {
@@ -68,5 +67,9 @@ public class ProdutoService {
 
     public boolean existsById(String id) {
         return repository.existsById(id);
+    }
+
+    public Optional<Produto> getById(String idProduto) {
+        return repository.findById(idProduto);
     }
 }

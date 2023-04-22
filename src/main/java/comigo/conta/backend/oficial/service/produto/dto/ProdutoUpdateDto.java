@@ -5,21 +5,11 @@ import javax.validation.constraints.NotBlank;
 
 public class ProdutoUpdateDto {
     @NotBlank
-    private String id;
-    @NotBlank
     private String nome;
     @NotBlank
     private String categoria;
     @DecimalMin("0.0")
     private double preco;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNome() {
         return nome;

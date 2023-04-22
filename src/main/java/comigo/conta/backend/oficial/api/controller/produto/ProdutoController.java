@@ -76,10 +76,15 @@ public class ProdutoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @GetMapping("/{idRestaurante}")
+    @GetMapping("/todos/{idRestaurante}")
     public ResponseEntity<List<ProdutoGetDto>> get(@PathVariable String idRestaurante) {
         final var allProdutos = service.getAll(idRestaurante).stream().map(ProdutoGetDto::new).toList();
         return allProdutos.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(allProdutos);
+    }
+
+    @GetMapping("/{idProduto}")
+    public ResponseEntity<Produto> getProduto(@PathVariable String idProduto) {
+        return ResponseEntity.of(service.getById(idProduto));
     }
 
     @ApiResponses({
@@ -103,13 +108,12 @@ public class ProdutoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @PutMapping("/editar/{idRestaurante}")
-    public ResponseEntity<ProdutoGetDto> update(
+    @PutMapping("/editar/{idProduto}")
+    public ResponseEntity<Produto> update(
             @RequestBody @Validated ProdutoUpdateDto produtoUpdateDto,
-            @PathVariable String idRestaurante
+            @PathVariable String idProduto
     ) {
-        final var savedProduto = this.service.update(produtoUpdateDto, idRestaurante);
-        return ResponseEntity.ok(new ProdutoGetDto(savedProduto));
+        return ResponseEntity.ok(this.service.update(produtoUpdateDto, idProduto));
     }
 
     @ApiResponses({

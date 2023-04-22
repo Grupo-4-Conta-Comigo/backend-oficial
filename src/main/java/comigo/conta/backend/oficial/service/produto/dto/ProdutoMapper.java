@@ -11,14 +11,4 @@ public class ProdutoMapper {
                 idRestaurante
         );
     }
-
-    public static Produto of(ProdutoUpdateDto produtoUpdateDto, String idRestaurante) {
-        return new Produto(
-                produtoUpdateDto.getId(),
-                produtoUpdateDto.getNome(),
-                produtoUpdateDto.getCategoria(),
-                produtoUpdateDto.getPreco(),
-                idRestaurante
-        );
-    }
 }

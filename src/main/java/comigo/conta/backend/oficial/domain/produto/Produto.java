@@ -9,7 +9,6 @@ import java.util.List;
 
 @Entity
 public class Produto {
-
     @Id
     private String id;
     private String nome;

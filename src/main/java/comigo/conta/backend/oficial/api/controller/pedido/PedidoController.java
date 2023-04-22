@@ -3,6 +3,7 @@ package comigo.conta.backend.oficial.api.controller.pedido;
 import comigo.conta.backend.oficial.domain.pedido.Pedido;
 import comigo.conta.backend.oficial.service.pedido.PedidoService;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoCriacaoDto;
+import comigo.conta.backend.oficial.service.pedido.dto.PedidoResponseDto;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoUpdateDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +21,6 @@ import java.util.Optional;
 @RequestMapping("/pedidos")
 @Tag(name = "Pedidos", description = "Grupo de requisições de Pedidos")
 public class PedidoController {
-
     private final PedidoService pedidoService;
 
     public PedidoController(PedidoService pedidoService) {
@@ -49,11 +49,15 @@ public class PedidoController {
             ),
     })
     @PostMapping("/criar/{idRestaurante}")
-    public ResponseEntity<Pedido> criar(
+    public ResponseEntity<PedidoResponseDto> criar(
             @RequestBody @Validated PedidoCriacaoDto pedidoCriacaoDto,
             @PathVariable String idRestaurante
     ) {
-        return ResponseEntity.status(201).body(this.pedidoService.criar(pedidoCriacaoDto, idRestaurante));
+        return ResponseEntity.status(201).body(
+                new PedidoResponseDto(
+                        this.pedidoService.criar(pedidoCriacaoDto, idRestaurante)
+                )
+        );
     }
 
     @ApiResponses({
@@ -78,12 +82,14 @@ public class PedidoController {
             ),
     })
     @GetMapping("/{idRestaurante}")
-    public ResponseEntity<List<Pedido>> getAll(
+    public ResponseEntity<List<PedidoResponseDto>> getAll(
             @PathVariable String idRestaurante,
             @RequestParam("ativos") Optional<Boolean> ativos
     ) {
         final var pedidos = pedidoService.getAll(idRestaurante, ativos);
-        return pedidos.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(pedidos);
+        return pedidos.isEmpty() ?
+                ResponseEntity.status(204).build() :
+                ResponseEntity.ok(pedidosToPedidosResponse(pedidos));
     }
 
     @ApiResponses({
@@ -151,11 +157,15 @@ public class PedidoController {
             ),
     })
     @PutMapping("/editar/{idPedido}")
-    public ResponseEntity<Pedido> editar(
+    public ResponseEntity<PedidoResponseDto> editar(
             @PathVariable String idPedido,
             @RequestBody PedidoUpdateDto pedidoCriacaoDto
     ) {
-        return ResponseEntity.ok(pedidoService.editar(idPedido, pedidoCriacaoDto));
+        return ResponseEntity.ok(
+                new PedidoResponseDto(
+                        pedidoService.editar(idPedido, pedidoCriacaoDto)
+                )
+        );
     }
 
     @ApiResponses({
@@ -176,8 +186,12 @@ public class PedidoController {
             ),
     })
     @PatchMapping("/finalizar/{idPedido}")
-    public ResponseEntity<Pedido> finzalizar(@PathVariable String idPedido) {
-        return ResponseEntity.ok(pedidoService.finalizar(idPedido));
+    public ResponseEntity<PedidoResponseDto> finzalizar(@PathVariable String idPedido) {
+        return ResponseEntity.ok(
+                new PedidoResponseDto(
+                        pedidoService.finalizar(idPedido)
+                )
+        );
     }
 
     @ApiResponses({
@@ -201,5 +215,9 @@ public class PedidoController {
     public ResponseEntity<Void> remover(@PathVariable String idPedido) {
         pedidoService.deletar(idPedido);
         return ResponseEntity.status(200).build();
+    }
+
+    private List<PedidoResponseDto> pedidosToPedidosResponse(List<Pedido> pedidos) {
+        return pedidos.stream().map(PedidoResponseDto::new).toList();
     }
 }

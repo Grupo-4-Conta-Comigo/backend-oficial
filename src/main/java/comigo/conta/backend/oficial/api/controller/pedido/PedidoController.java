@@ -112,10 +112,10 @@ public class PedidoController {
     })
     @GetMapping("/{idPedido}")
     public ResponseEntity<PedidoResponseDto> getPedidoById(@PathVariable String idPedido) {
-        return pedidoService.getById(idPedido)
+        return ResponseEntity.of(
+                pedidoService.getById(idPedido)
                 .map(PedidoResponseDto::new)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).build());
+        );
     }
 
     @ApiResponses({

@@ -5,6 +5,7 @@ import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.ItemC
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,14 +22,16 @@ public class ItemComandaController {
 
     @PostMapping("/criar/")
     public ResponseEntity<ItemComanda> postItemComanda(
-            @RequestBody ItemComandaCriacaoDto itemComandaCriacaoDto
+            @RequestBody @Validated ItemComandaCriacaoDto itemComandaCriacaoDto
     ) {
         return ResponseEntity.status(201).body(itemComandaService.criar(itemComandaCriacaoDto));
     }
 
-    @GetMapping("/{idComanda}")
+    @GetMapping("/todos/{idComanda}")
     public ResponseEntity<List<ItemComanda>> getAll(@PathVariable String idComanda) {
         final List<ItemComanda> itens = itemComandaService.getAll(idComanda);
         return itens.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(itens);
     }
+
+
 }

@@ -36,8 +36,10 @@ public class RestauranteController {
             )
     })
     @PostMapping("/criar")
-    public ResponseEntity<Void> criar(@RequestBody @Validated RestauranteCriacaoDto restauranteCriacaoDto) {
-        this.restauranteService.criar(restauranteCriacaoDto);
+    public ResponseEntity<Void> criar(
+            @RequestBody @Validated RestauranteCriacaoDto restauranteCriacaoDto
+    ) {
+        restauranteService.criar(restauranteCriacaoDto);
         return ResponseEntity.status(201).build();
     }
 
@@ -51,8 +53,10 @@ public class RestauranteController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<RestauranteTokenDto> login(@RequestBody @Validated RestauranteLoginDto restauranteLoginDto) {
-        RestauranteTokenDto restauranteTokenDto = this.restauranteService.autenticar(restauranteLoginDto);
+    public ResponseEntity<RestauranteTokenDto> login(
+            @RequestBody @Validated RestauranteLoginDto restauranteLoginDto
+    ) {
+        RestauranteTokenDto restauranteTokenDto = restauranteService.autenticar(restauranteLoginDto);
 
         return ResponseEntity.status(200).body(restauranteTokenDto);
     }

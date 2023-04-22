@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -56,7 +57,7 @@ public class Comanda {
     }
 
     public List<ItemComanda> getItensComanda() {
-        return itensComanda;
+        return itensComanda != null ? itensComanda : new ArrayList<>();
     }
 
     public void setItensComanda(List<ItemComanda> itensComanda) {

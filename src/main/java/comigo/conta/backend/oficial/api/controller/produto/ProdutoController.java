@@ -133,7 +133,7 @@ public class ProdutoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @DeleteMapping("/{idProduto}")
+    @DeleteMapping("/deletar/{idProduto}")
     public ResponseEntity<Void> delete(@PathVariable String idProduto) {
         this.service.delete(idProduto);
 

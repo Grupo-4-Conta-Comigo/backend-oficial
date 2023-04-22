@@ -39,6 +39,9 @@ public class ComandaService {
 
         return this.comandaRepository.save(novaComanda);
     }
+    public Optional<Comanda> getById(String idPedido) {
+        return comandaRepository.findById(idPedido);
+    }
 
     public List<Comanda> getAll(String idPedido, Optional<Boolean> ativos) {
         if (!pedidoService.existe(idPedido)) {
@@ -59,7 +62,7 @@ public class ComandaService {
         final Comanda comandaAtual = getComandaOrThrow404(idComanda);
 
         comandaAtual.setStatus(comandaUpdateDto.getStatus());
-        comandaAtual.setNomeDono(comandaAtual.getNomeDono());
+        comandaAtual.setNomeDono(comandaUpdateDto.getNomeDono());
 
         return comandaRepository.save(comandaAtual);
     }
@@ -94,4 +97,5 @@ public class ComandaService {
     public double getPreco(String idComanda) {
         return getPriceFromComandaUsecase.execute(getComandaOrThrow404(idComanda));
     }
+
 }

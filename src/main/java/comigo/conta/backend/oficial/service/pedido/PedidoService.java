@@ -48,6 +48,10 @@ public class PedidoService {
         return repository.findAllByIdRestauranteAndStatus(idRestaurante, active.get() ? Status.ativo : Status.finalizado);
     }
 
+    public Optional<Pedido> getById(String idPedido) {
+        return repository.findById(idPedido);
+    }
+
     public double getPreco(String idPedido) {
         return getPriceFromPedidoUsecase.execute(getPedidoOrElseThrow(idPedido));
     }

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,10 +16,10 @@ public class Pedido {
     private String id;
     private int mesa;
     private Status status;
-    @OneToMany(mappedBy = "pedido")
-    private List<Comanda> comandas;
     private String idRestaurante;
     private LocalDateTime dataCriacao;
+    @OneToMany(mappedBy = "pedido")
+    private List<Comanda> comandas;
 
     public Pedido() {
         dataCriacao = LocalDateTime.now();
@@ -69,15 +70,16 @@ public class Pedido {
         this.idRestaurante = idRestaurante;
     }
 
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
     public List<Comanda> getComandas() {
-        return comandas;
+        return comandas != null ? comandas : new ArrayList<>();
     }
 
     public void setComandas(List<Comanda> comandas) {
         this.comandas = comandas;
     }
 
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
 }

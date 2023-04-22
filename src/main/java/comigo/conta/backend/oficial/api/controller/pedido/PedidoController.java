@@ -81,7 +81,7 @@ public class PedidoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @GetMapping("/{idRestaurante}")
+    @GetMapping("/todos/{idRestaurante}")
     public ResponseEntity<List<PedidoResponseDto>> getAll(
             @PathVariable String idRestaurante,
             @RequestParam("ativos") Optional<Boolean> ativos
@@ -90,6 +90,32 @@ public class PedidoController {
         return pedidos.isEmpty() ?
                 ResponseEntity.status(204).build() :
                 ResponseEntity.ok(pedidosToPedidosResponse(pedidos));
+    }
+
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
+    @GetMapping("/{idPedido}")
+    public ResponseEntity<PedidoResponseDto> getPedidoById(@PathVariable String idPedido) {
+        return pedidoService.getById(idPedido)
+                .map(PedidoResponseDto::new)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(404).build());
     }
 
     @ApiResponses({
@@ -159,7 +185,7 @@ public class PedidoController {
     @PutMapping("/editar/{idPedido}")
     public ResponseEntity<PedidoResponseDto> editar(
             @PathVariable String idPedido,
-            @RequestBody PedidoUpdateDto pedidoCriacaoDto
+            @RequestBody @Validated PedidoUpdateDto pedidoCriacaoDto
     ) {
         return ResponseEntity.ok(
                 new PedidoResponseDto(
@@ -211,7 +237,7 @@ public class PedidoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @DeleteMapping("/{idPedido}")
+    @DeleteMapping("/deletar/{idPedido}")
     public ResponseEntity<Void> remover(@PathVariable String idPedido) {
         pedidoService.deletar(idPedido);
         return ResponseEntity.status(200).build();

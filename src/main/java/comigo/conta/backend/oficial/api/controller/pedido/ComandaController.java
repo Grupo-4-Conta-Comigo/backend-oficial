@@ -3,6 +3,7 @@ package comigo.conta.backend.oficial.api.controller.pedido;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaCriacaoDto;
+import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaResponseDto;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.dto.ComandaUpdateDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,12 +48,41 @@ public class ComandaController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @PostMapping("/{idPedido}")
-    public ResponseEntity<Comanda> postComanda(
-            @RequestBody @Validated ComandaCriacaoDto comandaCriacaoDto,
-            @PathVariable String idPedido
+    @PostMapping("/criar/{idPedido}")
+    public ResponseEntity<ComandaResponseDto> postComanda(
+            @PathVariable String idPedido,
+            @RequestBody @Validated ComandaCriacaoDto comandaCriacaoDto
     ) {
-        return ResponseEntity.status(201).body(this.comandaService.criar(comandaCriacaoDto, idPedido));
+        return ResponseEntity.status(201).body(
+                new ComandaResponseDto(
+                        comandaService.criar(comandaCriacaoDto, idPedido)
+                )
+        );
+    }
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
+    @GetMapping("/{idPedido}")
+    public ResponseEntity<ComandaResponseDto> getComandaById(@PathVariable String idPedido) {
+        return ResponseEntity.of(
+                comandaService.getById(idPedido)
+                .map(ComandaResponseDto::new)
+        );
     }
 
     @ApiResponses({
@@ -76,13 +106,15 @@ public class ComandaController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @GetMapping("/{idPedido}")
-    public ResponseEntity<List<Comanda>> getAll(
+    @GetMapping("/todas/{idPedido}")
+    public ResponseEntity<List<ComandaResponseDto>> getAll(
             @PathVariable String idPedido,
             @RequestParam("ativos") Optional<Boolean> ativos
     ) {
         final List<Comanda> comandas = this.comandaService.getAll(idPedido, ativos);
-        return comandas.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(comandas);
+        return comandas.isEmpty() ?
+                ResponseEntity.status(204).build() :
+                ResponseEntity.ok(comandaToComandaDto(comandas));
     }
 
     @ApiResponses({
@@ -129,11 +161,15 @@ public class ComandaController {
             ),
     })
     @PutMapping("/editar/{idComanda}")
-    public ResponseEntity<Comanda> putComanda(
+    public ResponseEntity<ComandaResponseDto> putComanda(
             @PathVariable String idComanda,
-            @RequestBody ComandaUpdateDto comandaUpdateDto
+            @RequestBody @Validated ComandaUpdateDto comandaUpdateDto
     ) {
-        return ResponseEntity.ok(this.comandaService.editar(idComanda, comandaUpdateDto));
+        return ResponseEntity.ok(
+                new ComandaResponseDto(
+                        comandaService.editar(idComanda, comandaUpdateDto)
+                )
+        );
     }
 
     @ApiResponses({
@@ -154,8 +190,12 @@ public class ComandaController {
             ),
     })
     @PatchMapping("/finalizar/{idComanda}")
-    public ResponseEntity<Comanda> finalizarComanda(@PathVariable String idComanda) {
-        return ResponseEntity.ok(this.comandaService.finalizar(idComanda));
+    public ResponseEntity<ComandaResponseDto> finalizarComanda(@PathVariable String idComanda) {
+        return ResponseEntity.ok(
+                new ComandaResponseDto(
+                        comandaService.finalizar(idComanda)
+                )
+        );
     }
 
     @ApiResponses({
@@ -175,10 +215,14 @@ public class ComandaController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @DeleteMapping("/{idComanda}")
+    @DeleteMapping("/deletar/{idComanda}")
     public ResponseEntity<Void> deletarComanda(@PathVariable String idComanda) {
         this.comandaService.deletar(idComanda);
         return ResponseEntity.status(200).build();
+    }
+
+    List<ComandaResponseDto> comandaToComandaDto(List<Comanda> comandas) {
+        return comandas.stream().map(ComandaResponseDto::new).toList();
     }
 
 }

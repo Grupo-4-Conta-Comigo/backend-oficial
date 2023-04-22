@@ -12,10 +12,10 @@ values
     ('fce3456e-1710-49cd-a174-03fb6be2aab1', 'Refrigerante', 'Bebida', 7.00, '1b1d6bca-7566-44f0-b8d3-08145522c3e2'),
     ('6cbfaeae-41a7-4965-8643-934588c0c0e2', 'Água', 'Bebida', 4.00, '1b1d6bca-7566-44f0-b8d3-08145522c3e2');
 insert into pedido
-    (id, mesa, status, id_restaurante)
+    (id, mesa, status, data_criacao, id_restaurante)
 values
-    ('1abcd728-fa91-457f-bb3a-f1d844616e36', 1, 0, '1b1d6bca-7566-44f0-b8d3-08145522c3e2'),
-    ('c3d5701f-9209-4df9-943e-6122b89a762c', 2, 1, '1b1d6bca-7566-44f0-b8d3-08145522c3e2');
+    ('1abcd728-fa91-457f-bb3a-f1d844616e36', 1, 0, current_timestamp,'1b1d6bca-7566-44f0-b8d3-08145522c3e2'),
+    ('c3d5701f-9209-4df9-943e-6122b89a762c', 2, 1, current_timestamp,'1b1d6bca-7566-44f0-b8d3-08145522c3e2');
 insert into comanda
     (id, nome_dono, status, pedido_id)
 values

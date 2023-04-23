@@ -14,11 +14,9 @@ public class RestauranteCriacaoDto {
     @CNPJ
     @Schema(example = "05.356.159/0001-67")
     private String cnpj;
-    @NotBlank
-    @Pattern(regexp = "\\d{5}-\\d{3}")
-    @Schema(example = "41200-545")
-    private String cep;
+
     @Email
+    @NotBlank
     private String email;
     @NotBlank
     @Size(min = 8)
@@ -30,14 +28,6 @@ public class RestauranteCriacaoDto {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
     }
 
     public String getEmail() {

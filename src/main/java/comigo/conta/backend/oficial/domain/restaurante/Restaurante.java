@@ -12,8 +12,6 @@ public class Restaurante {
     private String nome;
     @Schema(example = "05.356.159/0001-67")
     private String cnpj;
-    @Schema(example = "41200-545")
-    private String cep;
     private String email;
     private String senha;
 
@@ -23,14 +21,6 @@ public class Restaurante {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
     }
 
     public String getCnpj() {

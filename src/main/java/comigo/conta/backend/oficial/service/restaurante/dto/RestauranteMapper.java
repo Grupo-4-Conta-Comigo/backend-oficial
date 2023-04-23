@@ -10,7 +10,6 @@ public class RestauranteMapper {
 
         restaurante.setNome(restauranteCriacaoDto.getNome());
         restaurante.setCnpj(restauranteCriacaoDto.getCnpj());
-        restaurante.setCep(restauranteCriacaoDto.getCep());
         restaurante.setEmail(restauranteCriacaoDto.getEmail());
         restaurante.setSenha(restauranteCriacaoDto.getSenha());
 
@@ -23,7 +22,6 @@ public class RestauranteMapper {
         restaurante.setUserId(restauranteAutenticado.getId());
         restaurante.setNome(restauranteAutenticado.getNome());
         restaurante.setCnpj(restauranteAutenticado.getCnpj());
-        restaurante.setCep(restauranteAutenticado.getCep());
         restaurante.setEmail(restauranteAutenticado.getEmail());
         restaurante.setToken(token);
 

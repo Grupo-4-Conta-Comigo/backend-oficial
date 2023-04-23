@@ -1,7 +1,7 @@
 insert into restaurante
-    (id, nome, cnpj, cep, email, senha)
+    (id, nome, cnpj, email, senha)
 values
-    ('1b1d6bca-7566-44f0-b8d3-08145522c3e2', 'Restaurante Conta Comigo', '70353298000107', '01532030', 'conta.comigo@email.com', '$2a$10$0/TKTGxdREbWaWjWYhwf6e9P1fPOAMMNqEnZgOG95jnSkHSfkkIrC');
+    ('1b1d6bca-7566-44f0-b8d3-08145522c3e2', 'Restaurante Conta Comigo', '70353298000107', 'conta.comigo@email.com', '$2a$10$0/TKTGxdREbWaWjWYhwf6e9P1fPOAMMNqEnZgOG95jnSkHSfkkIrC');
 insert into produto
     (id, nome, categoria, preco, id_restaurante)
 values

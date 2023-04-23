@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,8 @@ public class PedidoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
+
+    @CrossOrigin
     @PostMapping("/criar/{idRestaurante}")
     public ResponseEntity<PedidoResponseDto> criar(
             @RequestBody @Validated PedidoCriacaoDto pedidoCriacaoDto,
@@ -81,6 +84,8 @@ public class PedidoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
+
+    @CrossOrigin
     @GetMapping("/todos/{idRestaurante}")
     public ResponseEntity<List<PedidoResponseDto>> getAll(
             @PathVariable String idRestaurante,

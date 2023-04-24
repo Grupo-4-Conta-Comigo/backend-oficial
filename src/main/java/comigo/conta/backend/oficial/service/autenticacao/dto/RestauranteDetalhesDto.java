@@ -9,14 +9,12 @@ import java.util.Collection;
 public class RestauranteDetalhesDto implements UserDetails {
     private final String nome;
     private final String cnpj;
-    private final String cep;
     private final String email;
     private final String senha;
 
     public RestauranteDetalhesDto(Restaurante restaurante) {
         this.nome = restaurante.getNome();
         this.cnpj = restaurante.getCnpj();
-        this.cep = restaurante.getCep();
         this.email = restaurante.getEmail();
         this.senha = restaurante.getSenha();
     }
@@ -30,9 +28,6 @@ public class RestauranteDetalhesDto implements UserDetails {
         return cnpj;
     }
 
-    public String getCep() {
-        return cep;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

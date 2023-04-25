@@ -1,8 +1,8 @@
 package comigo.conta.backend.oficial.domain.pedido.repository;
 
+import comigo.conta.backend.oficial.domain.pedido.Pedido;
 import comigo.conta.backend.oficial.domain.shared.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
-import comigo.conta.backend.oficial.domain.pedido.Pedido;
 
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package comigo.conta.backend.oficial.domain.shared.object_utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -11,6 +13,14 @@ public class ListaObj<T> {
     public ListaObj(int size) {
         this.size = 0;
         this.vetor = (T[]) new Object[size];
+    }
+
+    public ListaObj(List<T> lista) {
+        this.size = 0;
+        this.vetor = (T[]) new Object[lista.size()];
+        for (final T object : lista) {
+            if (!add(object)) throw new IllegalStateException("Como...");
+        }
     }
 
     public boolean add(T value) {
@@ -30,18 +40,24 @@ public class ListaObj<T> {
     }
 
     public boolean add(ListaObj<T> list) {
-        return add(list.vetor);
+        if (size + list.size() > vetor.length) {
+            return false;
+        }
+        for (int i = size; i < size + list.size(); i++) {
+            add(list.get(i));
+        }
+        return true;
     }
 
     public boolean add(List<T> list) {
         return add((T[]) list.toArray());
     }
 
-    public Optional<T> get(int index) {
+    public T get(int index) {
         if (isIndiceInvalido(index)) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(vetor[index]);
+        return vetor[index];
     }
 
     public Optional<Integer> getIndex(T value) {
@@ -107,6 +123,10 @@ public class ListaObj<T> {
         size++;
         vetor[0] = value;
         return true;
+    }
+
+    public List<T> toList() {
+        return new ArrayList<>(Arrays.asList(vetor).subList(0, size));
     }
 
     public int size() {

@@ -1,7 +1,9 @@
 package comigo.conta.backend.oficial.service.pedido.submodules.item_comanda;
 
+import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.repository.ItemComandaRepository;
+import comigo.conta.backend.oficial.domain.produto.Produto;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemComandaService {
@@ -33,12 +36,12 @@ public class ItemComandaService {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
         }
 
-        final ItemComanda novaComanda = itemComandaCriacaoDto.toEntity();
+        final ItemComanda novoItemComanda = itemComandaCriacaoDto.toEntity();
 
         final String id = generateRandomIdUsecase.execute();
-        novaComanda.setId(id);
+        novoItemComanda.setId(id);
 
-        return itemComandaRepository.save(novaComanda);
+        return itemComandaRepository.save(novoItemComanda);
     }
 
     public List<ItemComanda> getAll(String idComanda) {
@@ -46,5 +49,44 @@ public class ItemComandaService {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
         }
         return itemComandaRepository.findAllByComandaId(idComanda);
+    }
+
+    public Optional<ItemComanda> getById(String idItemComanda) {
+        return itemComandaRepository.findById(idItemComanda);
+    }
+
+    public ItemComanda editar(String idItemComanda, ItemComandaCriacaoDto itemComandaCriacaoDto) {
+        final ItemComanda itemComandaAtual = getOrThrow404(idItemComanda);
+
+        final var comanda = new Comanda();
+        comanda.setId(itemComandaCriacaoDto.getIdComanda());
+
+        final var produto = new Produto();
+        produto.setId(itemComandaCriacaoDto.getIdProduto());
+
+        itemComandaAtual.setComanda(comanda);
+        itemComandaAtual.setProduto(produto);
+        itemComandaAtual.setObservacao(itemComandaCriacaoDto.getObservacao());
+
+        return itemComandaRepository.save(itemComandaAtual);
+    }
+
+    public void deletar(String idItemComanda) {
+        if (!itemComandaRepository.existsById(idItemComanda)) {
+            throw  new ResponseStatusException(404,"Item da Comanda não encontrado!",null);
+        }
+        itemComandaRepository.deleteById(idItemComanda);
+    }
+
+    private ItemComanda getOrThrow404(String idItemComanda) {
+        return itemComandaRepository
+                .findById(idItemComanda)
+                .orElseThrow(
+                        () -> new ResponseStatusException(
+                                404,
+                                "Item da Comanda não encontrado!",
+                                null
+                        )
+                );
     }
 }

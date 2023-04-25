@@ -3,6 +3,8 @@ package comigo.conta.backend.oficial.service.pedido;
 import comigo.conta.backend.oficial.domain.pedido.Pedido;
 import comigo.conta.backend.oficial.domain.pedido.repository.PedidoRepository;
 import comigo.conta.backend.oficial.domain.shared.Status;
+import comigo.conta.backend.oficial.domain.shared.object_utils.ListaObj;
+import comigo.conta.backend.oficial.domain.shared.object_utils.list_sorting.SortPedidosOldestToNewests;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.domain.shared.usecases.GetPriceFromPedidoUsecase;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoCriacaoDto;
@@ -19,12 +21,14 @@ public class PedidoService {
     private final PedidoRepository repository;
     private final RestauranteService restauranteService;
     private final GetPriceFromPedidoUsecase getPriceFromPedidoUsecase;
+    private final SortPedidosOldestToNewests sortPedidosOldestToNewests;
     private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public PedidoService(PedidoRepository repository, RestauranteService restauranteService, GetPriceFromPedidoUsecase getPriceFromPedidoUsecase, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public PedidoService(PedidoRepository repository, RestauranteService restauranteService, GetPriceFromPedidoUsecase getPriceFromPedidoUsecase, SortPedidosOldestToNewests sortPedidosOldestToNewests, GenerateRandomIdUsecase generateRandomIdUsecase) {
         this.repository = repository;
         this.restauranteService = restauranteService;
         this.getPriceFromPedidoUsecase = getPriceFromPedidoUsecase;
+        this.sortPedidosOldestToNewests = sortPedidosOldestToNewests;
         this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
@@ -39,13 +43,24 @@ public class PedidoService {
         return this.repository.save(novoPedido);
     }
 
-    public List<Pedido> getAll(String idRestaurante, Optional<Boolean> active) {
+    public List<Pedido> getAll(
+            String idRestaurante,
+            Optional<Boolean> active,
+            Optional<Boolean> orderByOldest
+    ) {
         verificaRestauranteExiste(idRestaurante);
+        List<Pedido> pedidos;
         if (active.isEmpty()) {
-            return repository.findAllByIdRestaurante(idRestaurante);
+            pedidos = repository.findAllByIdRestaurante(idRestaurante);
+        } else {
+            pedidos = repository.findAllByIdRestauranteAndStatus(idRestaurante, active.get() ? Status.ativo : Status.finalizado);
+        }
+        if (orderByOldest.orElse(false)) {
+            pedidos = sortPedidosOldestToNewests.sort(new ListaObj<>(pedidos)).toList();
         }
 
-        return repository.findAllByIdRestauranteAndStatus(idRestaurante, active.get() ? Status.ativo : Status.finalizado);
+        System.out.println(pedidos);
+        return pedidos;
     }
 
     public Optional<Pedido> getById(String idPedido) {

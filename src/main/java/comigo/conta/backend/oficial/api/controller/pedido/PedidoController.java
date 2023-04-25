@@ -89,9 +89,10 @@ public class PedidoController {
     @GetMapping("/todos/{idRestaurante}")
     public ResponseEntity<List<PedidoResponseDto>> getAll(
             @PathVariable String idRestaurante,
-            @RequestParam("ativos") Optional<Boolean> ativos
+            @RequestParam("ativos") Optional<Boolean> ativos,
+            @RequestParam("orderByOldest") Optional<Boolean> orderByOldest
     ) {
-        final var pedidos = pedidoService.getAll(idRestaurante, ativos);
+        final var pedidos = pedidoService.getAll(idRestaurante, ativos, orderByOldest);
         return pedidos.isEmpty() ?
                 ResponseEntity.status(204).build() :
                 ResponseEntity.ok(pedidosToPedidosResponse(pedidos));

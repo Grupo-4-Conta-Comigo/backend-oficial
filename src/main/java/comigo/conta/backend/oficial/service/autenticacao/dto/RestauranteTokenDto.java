@@ -4,7 +4,6 @@ public class RestauranteTokenDto {
     private String userId;
     private String nome;
     private String cnpj;
-    private String cep;
     private String email;
     private String token;
 
@@ -30,14 +29,6 @@ public class RestauranteTokenDto {
 
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
-    }
-
-    public String getCep() {
-        return cep;
-    }
-
-    public void setCep(String cep) {
-        this.cep = cep;
     }
 
     public String getEmail() {

@@ -1,7 +1,11 @@
 package comigo.conta.backend.oficial.service.restaurante;
 
+import comigo.conta.backend.oficial.api.configuration.security.jwt.GerenciadorTokenJwt;
+import comigo.conta.backend.oficial.domain.restaurante.Restaurante;
+import comigo.conta.backend.oficial.domain.restaurante.repository.RestauranteRepository;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteLoginDto;
+import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteTokenDto;
 import comigo.conta.backend.oficial.service.restaurante.dto.RestauranteCriacaoDto;
 import comigo.conta.backend.oficial.service.restaurante.dto.RestauranteMapper;
@@ -11,8 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import comigo.conta.backend.oficial.api.configuration.security.jwt.GerenciadorTokenJwt;
-import comigo.conta.backend.oficial.domain.restaurante.repository.RestauranteRepository;
 
 @Service
 public class RestauranteService {
@@ -59,6 +61,19 @@ public class RestauranteService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final var token = gerenciadorTokenJwt.generateToken(authentication);
         return RestauranteMapper.of(restauranteAutenticado, token);
+    }
+
+    public void mudarSenha(RestauranteMudarSenhaDto restauranteMudarSenhaDto) {
+        final Restaurante restaurante = repository
+                .findByEmail(restauranteMudarSenhaDto.getEmail())
+                .orElseThrow(
+                        () -> new ResponseStatusException(404, "Email não encontrado!", null)
+                );
+
+        final String senhaCriptografada = passwordEncoder.encode(restauranteMudarSenhaDto.getSenhaNova());
+        restaurante.setSenha(senhaCriptografada);
+
+        repository.save(restaurante);
     }
 
     public boolean existe(String idRestaurante) {

@@ -1,6 +1,7 @@
 package comigo.conta.backend.oficial.api.controller.restaurante;
 
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteLoginDto;
+import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteTokenDto;
 import comigo.conta.backend.oficial.service.restaurante.RestauranteService;
 import comigo.conta.backend.oficial.service.restaurante.dto.RestauranteCriacaoDto;
@@ -23,19 +24,24 @@ import java.util.FormatterClosedException;
 @Tag(name = "Restaurantes", description = "Grupo de requisições de Restaurantes")
 public class RestauranteController {
 
-    public static void gravaArquivoCsv(RestauranteCriacaoDto restaurante, String nomeArq){
+    private final RestauranteService restauranteService;
+
+    public RestauranteController(RestauranteService restauranteService) {
+        this.restauranteService = restauranteService;
+    }
+
+    public static void gravaArquivoCsv(RestauranteCriacaoDto restaurante, String nomeArq) {
         FileWriter arq = null;
         Formatter saida = null;
-        Boolean deuRuim = false;
+        boolean deuRuim = false;
 
         nomeArq += ".csv";
 
         // Bloco try catch para abrir o arquivo
         try {
-            arq = new FileWriter(nomeArq,true);
+            arq = new FileWriter(nomeArq, true);
             saida = new Formatter(arq);
-        }
-        catch (IOException erro){
+        } catch (IOException erro) {
             System.out.println("Erro ao abrir o arquivo");
             System.exit(1);
         }
@@ -46,31 +52,22 @@ public class RestauranteController {
             saida.format("%s;%s;%s\n", restaurante.getNome(),
                     restaurante.getEmail(),
                     restaurante.getCnpj());
-        }
-        catch (FormatterClosedException erro){
+        } catch (FormatterClosedException erro) {
             System.out.println("Erro ao gravar o arquivo");
             deuRuim = true;
-        }
-        finally {
+        } finally {
             saida.close();
             try {
                 arq.close();
-            }
-            catch (IOException erro){
+            } catch (IOException erro) {
                 System.out.println("Erro ao fechar o arquivo");
                 deuRuim = true;
             }
 
-            if(deuRuim){
+            if (deuRuim) {
                 System.exit(1);
             }
         }
-    }
-
-    private final RestauranteService restauranteService;
-
-    public RestauranteController(RestauranteService restauranteService) {
-        this.restauranteService = restauranteService;
     }
 
     @ApiResponses({
@@ -89,7 +86,7 @@ public class RestauranteController {
             @RequestBody @Validated RestauranteCriacaoDto restauranteCriacaoDto
     ) {
         restauranteService.criar(restauranteCriacaoDto);
-        gravaArquivoCsv(restauranteCriacaoDto,"Restaurantes");
+        gravaArquivoCsv(restauranteCriacaoDto, "Restaurantes");
         return ResponseEntity.status(201).build();
     }
 
@@ -109,5 +106,22 @@ public class RestauranteController {
         RestauranteTokenDto restauranteTokenDto = restauranteService.autenticar(restauranteLoginDto);
 
         return ResponseEntity.status(200).body(restauranteTokenDto);
+    }
+
+    @PatchMapping("/mudar-senha")
+    public ResponseEntity<RestauranteTokenDto> mudarSenha(
+            @RequestBody @Validated RestauranteMudarSenhaDto restauranteMudarSenhaDto
+    ) {
+        final var restauranteLoginAntigoDto = new RestauranteLoginDto();
+        restauranteLoginAntigoDto.setEmail(restauranteMudarSenhaDto.getEmail());
+        restauranteLoginAntigoDto.setSenha(restauranteMudarSenhaDto.getSenhaAntiga());
+        restauranteService.autenticar(restauranteLoginAntigoDto);
+
+        restauranteService.mudarSenha(restauranteMudarSenhaDto);
+
+        final var restauranteLoginNovoDto = new RestauranteLoginDto();
+        restauranteLoginNovoDto.setEmail(restauranteMudarSenhaDto.getEmail());
+        restauranteLoginNovoDto.setSenha(restauranteMudarSenhaDto.getSenhaNova());
+        return login(restauranteLoginNovoDto);
     }
 }

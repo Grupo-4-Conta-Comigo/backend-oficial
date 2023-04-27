@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/pedidos")
 @Tag(name = "Pedidos", description = "Grupo de requisições de Pedidos")
+@SecurityRequirement(name = "Bearer")
 public class PedidoController {
     private final PedidoService pedidoService;
 
@@ -87,6 +88,7 @@ public class PedidoController {
 
     @CrossOrigin
     @GetMapping("/todos/{idRestaurante}")
+//    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<List<PedidoResponseDto>> getAll(
             @PathVariable String idRestaurante,
             @RequestParam("ativos") Optional<Boolean> ativos,

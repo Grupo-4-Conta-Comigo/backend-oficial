@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
-import java.util.FormatterClosedException;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -31,42 +30,15 @@ public class RestauranteController {
     }
 
     public static void gravaArquivoCsv(RestauranteCriacaoDto restaurante, String nomeArq) {
-        FileWriter arq = null;
-        Formatter saida = null;
-        boolean deuRuim = false;
-
         nomeArq += ".csv";
-
-        // Bloco try catch para abrir o arquivo
-        try {
-            arq = new FileWriter(nomeArq, true);
-            saida = new Formatter(arq);
+        try (
+                final FileWriter arq = new FileWriter(nomeArq, true);
+                final Formatter saida = new Formatter(arq)
+        ) {
+            saida.format("%s;%s;%s\n", restaurante.getNome(), restaurante.getEmail(), restaurante.getCnpj());
         } catch (IOException erro) {
             System.out.println("Erro ao abrir o arquivo");
-            System.exit(1);
-        }
-
-        // Bloco try catch para gravar no arquivo
-
-        try {
-            saida.format("%s;%s;%s\n", restaurante.getNome(),
-                    restaurante.getEmail(),
-                    restaurante.getCnpj());
-        } catch (FormatterClosedException erro) {
-            System.out.println("Erro ao gravar o arquivo");
-            deuRuim = true;
-        } finally {
-            saida.close();
-            try {
-                arq.close();
-            } catch (IOException erro) {
-                System.out.println("Erro ao fechar o arquivo");
-                deuRuim = true;
-            }
-
-            if (deuRuim) {
-                System.exit(1);
-            }
+            erro.printStackTrace();
         }
     }
 

@@ -1,4 +1,4 @@
-package comigo.conta.backend.oficial.domain.shared.object_utils;
+package comigo.conta.backend.oficial.domain.shared.object_utils.lista;
 
 import java.util.ArrayList;
 import java.util.Arrays;

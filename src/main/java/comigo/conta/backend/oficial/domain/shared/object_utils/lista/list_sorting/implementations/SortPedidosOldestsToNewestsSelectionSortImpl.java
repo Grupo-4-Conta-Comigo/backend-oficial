@@ -1,8 +1,8 @@
-package comigo.conta.backend.oficial.domain.shared.object_utils.list_sorting.implementations;
+package comigo.conta.backend.oficial.domain.shared.object_utils.lista.list_sorting.implementations;
 
 import comigo.conta.backend.oficial.domain.pedido.Pedido;
-import comigo.conta.backend.oficial.domain.shared.object_utils.ListaObj;
-import comigo.conta.backend.oficial.domain.shared.object_utils.list_sorting.SortPedidosOldestToNewests;
+import comigo.conta.backend.oficial.domain.shared.object_utils.lista.ListaObj;
+import comigo.conta.backend.oficial.domain.shared.object_utils.lista.list_sorting.SortPedidosOldestToNewests;
 import org.springframework.stereotype.Service;
 
 @Service

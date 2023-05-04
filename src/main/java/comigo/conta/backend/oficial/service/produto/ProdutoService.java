@@ -6,7 +6,7 @@ import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUseca
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoCriacaoDto;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoMapper;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoUpdateDto;
-import comigo.conta.backend.oficial.service.restaurante.RestauranteService;
+import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,17 +16,17 @@ import java.util.Optional;
 @Service
 public class ProdutoService {
     private final ProdutoRepository repository;
-    private final RestauranteService restauranteService;
+    private final UsuarioService usuarioService;
     private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public ProdutoService(ProdutoRepository repository, RestauranteService restauranteService, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public ProdutoService(ProdutoRepository repository, UsuarioService usuarioService, GenerateRandomIdUsecase generateRandomIdUsecase) {
         this.repository = repository;
-        this.restauranteService = restauranteService;
+        this.usuarioService = usuarioService;
         this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
     public Produto criar(ProdutoCriacaoDto produtoCriacaoDto, String idRestaurante) {
-        if (!restauranteService.existe(idRestaurante)) {
+        if (usuarioService.naoExiste(idRestaurante)) {
             throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
         }
         final var novoProduto = ProdutoMapper.of(produtoCriacaoDto, idRestaurante);

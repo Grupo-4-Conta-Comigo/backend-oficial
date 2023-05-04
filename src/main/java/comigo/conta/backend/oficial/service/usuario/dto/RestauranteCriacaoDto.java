@@ -1,18 +1,24 @@
-package comigo.conta.backend.oficial.domain.restaurante;
+package comigo.conta.backend.oficial.service.usuario.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.hibernate.validator.constraints.br.CNPJ;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
-@Entity
-public class Restaurante {
-    @Id
-    private String id;
+public class RestauranteCriacaoDto {
+    @NotBlank
     private String nome;
+    @CNPJ
     @Schema(example = "05.356.159/0001-67")
     private String cnpj;
+
+    @Email
+    @NotBlank
     private String email;
+    @NotBlank
+    @Size(min = 8)
     private String senha;
 
     public String getNome() {
@@ -21,14 +27,6 @@ public class Restaurante {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
     }
 
     public String getEmail() {
@@ -47,11 +45,11 @@ public class Restaurante {
         this.senha = senha;
     }
 
-    public String getId() {
-        return id;
+    public String getCnpj() {
+        return cnpj;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 }

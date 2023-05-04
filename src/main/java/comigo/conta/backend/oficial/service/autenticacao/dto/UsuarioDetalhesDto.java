@@ -2,21 +2,21 @@ package comigo.conta.backend.oficial.service.autenticacao.dto;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import comigo.conta.backend.oficial.domain.restaurante.Restaurante;
+import comigo.conta.backend.oficial.domain.usuario.Usuario;
 
 import java.util.Collection;
 
-public class RestauranteDetalhesDto implements UserDetails {
+public class UsuarioDetalhesDto implements UserDetails {
     private final String nome;
-    private final String cnpj;
+    private final String registro;
     private final String email;
     private final String senha;
 
-    public RestauranteDetalhesDto(Restaurante restaurante) {
-        this.nome = restaurante.getNome();
-        this.cnpj = restaurante.getCnpj();
-        this.email = restaurante.getEmail();
-        this.senha = restaurante.getSenha();
+    public UsuarioDetalhesDto(Usuario usuario) {
+        this.nome = usuario.getNome();
+        this.registro = usuario.getRegistro();
+        this.email = usuario.getEmail();
+        this.senha = usuario.getSenha();
     }
 
     public String getNome() {
@@ -24,8 +24,8 @@ public class RestauranteDetalhesDto implements UserDetails {
     }
 
 
-    public String getCnpj() {
-        return cnpj;
+    public String getRegistro() {
+        return registro;
     }
 
 

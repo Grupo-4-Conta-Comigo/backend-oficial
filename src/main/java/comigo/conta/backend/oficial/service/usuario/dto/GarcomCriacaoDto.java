@@ -1,26 +1,26 @@
-package comigo.conta.backend.oficial.service.restaurante.dto;
+package comigo.conta.backend.oficial.service.usuario.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.hibernate.validator.constraints.br.CNPJ;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class RestauranteCriacaoDto {
+public class GarcomCriacaoDto {
     @NotBlank
     private String nome;
-    @CNPJ
-    @Schema(example = "05.356.159/0001-67")
-    private String cnpj;
-
-    @Email
+    @CPF
     @NotBlank
+    @Schema(example = "500.757.680-89")
+    private String cpf;
+    @Email
     private String email;
     @NotBlank
     @Size(min = 8)
     private String senha;
+    @NotBlank
+    private String restauranteId;
 
     public String getNome() {
         return nome;
@@ -28,6 +28,14 @@ public class RestauranteCriacaoDto {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
@@ -46,11 +54,11 @@ public class RestauranteCriacaoDto {
         this.senha = senha;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public String getRestauranteId() {
+        return restauranteId;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setRestauranteId(String restauranteId) {
+        this.restauranteId = restauranteId;
     }
 }

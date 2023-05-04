@@ -9,7 +9,7 @@ import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUseca
 import comigo.conta.backend.oficial.domain.shared.usecases.GetPriceFromPedidoUsecase;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoCriacaoDto;
 import comigo.conta.backend.oficial.service.pedido.dto.PedidoUpdateDto;
-import comigo.conta.backend.oficial.service.restaurante.RestauranteService;
+import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,14 +19,14 @@ import java.util.Optional;
 @Service
 public class PedidoService {
     private final PedidoRepository repository;
-    private final RestauranteService restauranteService;
+    private final UsuarioService usuarioService;
     private final GetPriceFromPedidoUsecase getPriceFromPedidoUsecase;
     private final SortPedidosOldestToNewests sortPedidosOldestToNewests;
     private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public PedidoService(PedidoRepository repository, RestauranteService restauranteService, GetPriceFromPedidoUsecase getPriceFromPedidoUsecase, SortPedidosOldestToNewests sortPedidosOldestToNewests, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public PedidoService(PedidoRepository repository, UsuarioService usuarioService, GetPriceFromPedidoUsecase getPriceFromPedidoUsecase, SortPedidosOldestToNewests sortPedidosOldestToNewests, GenerateRandomIdUsecase generateRandomIdUsecase) {
         this.repository = repository;
-        this.restauranteService = restauranteService;
+        this.usuarioService = usuarioService;
         this.getPriceFromPedidoUsecase = getPriceFromPedidoUsecase;
         this.sortPedidosOldestToNewests = sortPedidosOldestToNewests;
         this.generateRandomIdUsecase = generateRandomIdUsecase;
@@ -108,7 +108,7 @@ public class PedidoService {
     }
 
     private void verificaRestauranteExiste(final String idRestaurante) {
-        if (!restauranteService.existe(idRestaurante)) {
+        if (usuarioService.naoExiste(idRestaurante)) {
             throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
         }
     }

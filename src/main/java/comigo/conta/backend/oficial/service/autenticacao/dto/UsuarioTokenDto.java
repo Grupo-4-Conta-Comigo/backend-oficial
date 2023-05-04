@@ -1,9 +1,12 @@
 package comigo.conta.backend.oficial.service.autenticacao.dto;
 
-public class RestauranteTokenDto {
+import comigo.conta.backend.oficial.domain.usuario.Cargo;
+
+public class UsuarioTokenDto {
     private String userId;
     private String nome;
-    private String cnpj;
+    private String registro;
+    private Cargo cargo;
     private String email;
     private String token;
 
@@ -23,12 +26,12 @@ public class RestauranteTokenDto {
         this.nome = nome;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public String getRegistro() {
+        return registro;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setRegistro(String registro) {
+        this.registro = registro;
     }
 
     public String getEmail() {
@@ -45,5 +48,13 @@ public class RestauranteTokenDto {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo = cargo;
     }
 }

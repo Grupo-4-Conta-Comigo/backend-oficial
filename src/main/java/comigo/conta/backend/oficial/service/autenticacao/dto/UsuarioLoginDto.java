@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotBlank;
 
-public class RestauranteLoginDto {
+public class UsuarioLoginDto {
     @NotBlank
     @Schema(example = "conta.comigo@email.com")
     private String email;

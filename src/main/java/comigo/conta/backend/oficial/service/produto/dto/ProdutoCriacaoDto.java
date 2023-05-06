@@ -1,5 +1,7 @@
 package comigo.conta.backend.oficial.service.produto.dto;
 
+import comigo.conta.backend.oficial.domain.produto.Categoria;
+
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,7 +10,7 @@ public class ProdutoCriacaoDto {
     @NotBlank
     private String nome;
     @NotBlank
-    private String categoria;
+    private Categoria categoria;
     @DecimalMin("0.0")
     @NotNull
     private double preco;
@@ -21,11 +23,11 @@ public class ProdutoCriacaoDto {
         this.nome = nome;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 

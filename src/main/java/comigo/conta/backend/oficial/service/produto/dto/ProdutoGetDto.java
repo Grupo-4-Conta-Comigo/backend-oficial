@@ -1,11 +1,12 @@
 package comigo.conta.backend.oficial.service.produto.dto;
 
+import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 
 public class ProdutoGetDto {
     private final String id;
     private final String nome;
-    private final String categoria;
+    private final Categoria categoria;
     private final double preco;
     private final String idRestaurante;
 
@@ -25,7 +26,7 @@ public class ProdutoGetDto {
         return nome;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 

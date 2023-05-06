@@ -12,7 +12,7 @@ public class Produto {
     @Id
     private String id;
     private String nome;
-    private String categoria;
+    private Categoria categoria;
     private double preco;
     private String idRestaurante;
     @OneToMany(mappedBy = "produto")
@@ -21,14 +21,14 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(String nome, String categoria, double preco, String idRestaurante) {
+    public Produto(String nome, Categoria categoria, double preco, String idRestaurante) {
         this.nome = nome;
         this.categoria = categoria;
         this.preco = preco;
         this.idRestaurante = idRestaurante;
     }
 
-    public Produto(String id, String nome, String categoria, double preco, String idRestaurante) {
+    public Produto(String id, String nome, Categoria categoria, double preco, String idRestaurante) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
@@ -44,11 +44,11 @@ public class Produto {
         this.nome = nome;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 

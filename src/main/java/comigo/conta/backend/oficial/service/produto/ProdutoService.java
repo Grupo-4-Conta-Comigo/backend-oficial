@@ -1,5 +1,6 @@
 package comigo.conta.backend.oficial.service.produto;
 
+import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 import comigo.conta.backend.oficial.domain.produto.repository.ProdutoRepository;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
@@ -37,8 +38,10 @@ public class ProdutoService {
         return this.repository.save(novoProduto);
     }
 
-    public List<Produto> getAll(String idRestaurante) {
-        return this.repository.findAllByIdRestaurante(idRestaurante);
+    public List<Produto> getAll(String idRestaurante, Optional<Categoria> categoria) {
+        return categoria.isPresent()
+                ? repository.findByIdRestauranteAndCategoria(idRestaurante, categoria.get())
+                : repository.findAllByIdRestaurante(idRestaurante);
     }
 
     public Produto update(ProdutoUpdateDto produtoUpdateDto, String idPedido) {

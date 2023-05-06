@@ -1,5 +1,6 @@
 package comigo.conta.backend.oficial.api.controller.produto;
 
+import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 import comigo.conta.backend.oficial.service.produto.ProdutoService;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoCriacaoDto;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/produtos")
@@ -77,8 +79,11 @@ public class ProdutoController {
             ),
     })
     @GetMapping("/todos/{idRestaurante}")
-    public ResponseEntity<List<ProdutoGetDto>> get(@PathVariable String idRestaurante) {
-        final var allProdutos = service.getAll(idRestaurante).stream().map(ProdutoGetDto::new).toList();
+    public ResponseEntity<List<ProdutoGetDto>> get(
+            @PathVariable String idRestaurante,
+            @RequestParam Optional<Categoria> categoria
+    ) {
+        final var allProdutos = service.getAll(idRestaurante, categoria).stream().map(ProdutoGetDto::new).toList();
         return allProdutos.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(allProdutos);
     }
 

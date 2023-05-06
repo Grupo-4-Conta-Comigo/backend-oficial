@@ -101,16 +101,71 @@ public class UsuarioController {
         return ResponseEntity.status(201).build();
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "204",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),@ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),@ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @GetMapping("/garcons/todos/{idRestaurante}")
     public ResponseEntity<List<Usuario>> getAll(@PathVariable String idRestaurante) {
         return listToResponseEntity(usuarioService.findGarconsByRestauranteId(idRestaurante));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),@ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),@ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @GetMapping("/garcons/{idGarcom}")
     public ResponseEntity<Usuario> getGarcom(@PathVariable String idGarcom) {
         return ResponseEntity.of(usuarioService.findGarcomById(idGarcom));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PutMapping("/garcons/editar/{idGarcom}")
     public ResponseEntity<Usuario> editarGarcom(
             @PathVariable String idGarcom,
@@ -119,12 +174,50 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.editarGarcom(garcomEdicaoDto, idGarcom));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @DeleteMapping("/garcons/{idGarcom}")
     public ResponseEntity<Void> deletarGarcom(@PathVariable String idGarcom) {
         usuarioService.deletarGarcom(idGarcom);
         return ResponseEntity.status(200).build();
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PatchMapping("/mudar-senha")
     public ResponseEntity<UsuarioTokenDto> mudarSenha(
             @RequestBody @Validated RestauranteMudarSenhaDto restauranteMudarSenhaDto

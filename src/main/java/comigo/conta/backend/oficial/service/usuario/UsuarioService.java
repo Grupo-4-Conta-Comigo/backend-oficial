@@ -8,6 +8,7 @@ import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioLoginDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioTokenDto;
 import comigo.conta.backend.oficial.service.usuario.dto.GarcomCriacaoDto;
+import comigo.conta.backend.oficial.service.usuario.dto.GarcomEdicaoDto;
 import comigo.conta.backend.oficial.service.usuario.dto.RestauranteCriacaoDto;
 import comigo.conta.backend.oficial.service.usuario.dto.UsuarioMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -108,5 +110,35 @@ public class UsuarioService {
 
     public boolean naoExiste(String idRestaurante) {
         return !repository.existsById(idRestaurante);
+    }
+
+    public Optional<Usuario> findGarcomById(String idGarcom) {
+        return repository.findById(idGarcom);
+    }
+
+    public Usuario editarGarcom(GarcomEdicaoDto garcomEdicaoDto, String idGarcom) {
+        final Usuario usuarioAtual = getOrThrow404(idGarcom);
+
+        usuarioAtual.setNome(garcomEdicaoDto.getNome());
+        usuarioAtual.setRegistro(garcomEdicaoDto.getCpf());
+        usuarioAtual.setCargo(garcomEdicaoDto.getCargo());
+        usuarioAtual.setEmail(garcomEdicaoDto.getEmail());
+        usuarioAtual.setSenha(garcomEdicaoDto.getSenha());
+
+        return repository.save(usuarioAtual);
+    }
+
+    private Usuario getOrThrow404(String idUsuario) {
+        return repository.findById(idUsuario)
+                .orElseThrow(
+                        () -> new ResponseStatusException(404, "Garçom não encontrado!", null)
+                );
+    }
+
+    public void deletarGarcom(String idGarcom) {
+        if (naoExiste(idGarcom)) {
+            throw new ResponseStatusException(404, "Garçom não encontrado!", null);
+        }
+        repository.deleteById(idGarcom);
     }
 }

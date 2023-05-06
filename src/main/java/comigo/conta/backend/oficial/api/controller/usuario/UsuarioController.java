@@ -7,6 +7,7 @@ import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSen
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioTokenDto;
 import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import comigo.conta.backend.oficial.service.usuario.dto.GarcomCriacaoDto;
+import comigo.conta.backend.oficial.service.usuario.dto.GarcomEdicaoDto;
 import comigo.conta.backend.oficial.service.usuario.dto.RestauranteCriacaoDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -92,7 +93,7 @@ public class UsuarioController {
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping("/criar/garcons")
+    @PostMapping("/garcons/criar")
     public ResponseEntity<Void> criarGarcom(
             @RequestBody @Validated GarcomCriacaoDto garcomCriacaoDto
     ) {
@@ -103,6 +104,25 @@ public class UsuarioController {
     @GetMapping("/garcons/todos/{idRestaurante}")
     public ResponseEntity<List<Usuario>> getAll(@PathVariable String idRestaurante) {
         return listToResponseEntity(usuarioService.findGarconsByRestauranteId(idRestaurante));
+    }
+
+    @GetMapping("/garcons/{idGarcom}")
+    public ResponseEntity<Usuario> getGarcom(@PathVariable String idGarcom) {
+        return ResponseEntity.of(usuarioService.findGarcomById(idGarcom));
+    }
+
+    @PutMapping("/garcons/editar/{idGarcom}")
+    public ResponseEntity<Usuario> editarGarcom(
+            @PathVariable String idGarcom,
+            @RequestBody @Validated GarcomEdicaoDto garcomEdicaoDto
+    ) {
+        return ResponseEntity.ok(usuarioService.editarGarcom(garcomEdicaoDto, idGarcom));
+    }
+
+    @DeleteMapping("/garcons/{idGarcom}")
+    public ResponseEntity<Void> deletarGarcom(@PathVariable String idGarcom) {
+        usuarioService.deletarGarcom(idGarcom);
+        return ResponseEntity.status(200).build();
     }
 
     @PatchMapping("/mudar-senha")

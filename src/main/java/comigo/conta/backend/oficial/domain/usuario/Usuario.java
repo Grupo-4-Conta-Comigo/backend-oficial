@@ -1,11 +1,9 @@
 package comigo.conta.backend.oficial.domain.usuario;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class Usuario {
@@ -43,7 +41,6 @@ public class Usuario {
         this.email = email;
     }
 
-    @JsonIgnore
     public String getSenha() {
         return senha;
     }

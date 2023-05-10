@@ -4,7 +4,7 @@ import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 
 public class ProdutoGetDto {
-    private final String id;
+    private final Long id;
     private final String nome;
     private final Categoria categoria;
     private final double preco;
@@ -18,7 +18,7 @@ public class ProdutoGetDto {
         this.idRestaurante = produto.getIdRestaurante();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

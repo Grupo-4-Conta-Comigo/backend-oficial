@@ -88,7 +88,7 @@ public class ProdutoController {
     }
 
     @GetMapping("/{idProduto}")
-    public ResponseEntity<Produto> getProduto(@PathVariable String idProduto) {
+    public ResponseEntity<Produto> getProduto(@PathVariable Long idProduto) {
         return ResponseEntity.of(service.getById(idProduto));
     }
 
@@ -116,7 +116,7 @@ public class ProdutoController {
     @PutMapping("/editar/{idProduto}")
     public ResponseEntity<Produto> update(
             @RequestBody @Validated ProdutoUpdateDto produtoUpdateDto,
-            @PathVariable String idProduto
+            @PathVariable Long idProduto
     ) {
         return ResponseEntity.ok(this.service.update(produtoUpdateDto, idProduto));
     }
@@ -139,7 +139,7 @@ public class ProdutoController {
             ),
     })
     @DeleteMapping("/deletar/{idProduto}")
-    public ResponseEntity<Void> delete(@PathVariable String idProduto) {
+    public ResponseEntity<Void> delete(@PathVariable Long idProduto) {
         this.service.delete(idProduto);
 
         return ResponseEntity.status(200).build();

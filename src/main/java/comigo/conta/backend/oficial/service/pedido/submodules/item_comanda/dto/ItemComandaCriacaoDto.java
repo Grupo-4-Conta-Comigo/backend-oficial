@@ -10,14 +10,14 @@ public class ItemComandaCriacaoDto {
     @NotBlank
     private String idComanda;
     @NotBlank
-    private String idProduto;
+    private Long idProduto;
     private String observacao;
 
-    public String getIdProduto() {
+    public Long getIdProduto() {
         return idProduto;
     }
 
-    public void setIdProduto(String idProduto) {
+    public void setIdProduto(Long idProduto) {
         this.idProduto = idProduto;
     }
 

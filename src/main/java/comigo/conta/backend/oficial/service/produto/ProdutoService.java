@@ -3,7 +3,6 @@ package comigo.conta.backend.oficial.service.produto;
 import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 import comigo.conta.backend.oficial.domain.produto.repository.ProdutoRepository;
-import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoCriacaoDto;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoMapper;
 import comigo.conta.backend.oficial.service.produto.dto.ProdutoUpdateDto;
@@ -18,12 +17,10 @@ import java.util.Optional;
 public class ProdutoService {
     private final ProdutoRepository repository;
     private final UsuarioService usuarioService;
-    private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public ProdutoService(ProdutoRepository repository, UsuarioService usuarioService, GenerateRandomIdUsecase generateRandomIdUsecase) {
+    public ProdutoService(ProdutoRepository repository, UsuarioService usuarioService) {
         this.repository = repository;
         this.usuarioService = usuarioService;
-        this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
     public Produto criar(ProdutoCriacaoDto produtoCriacaoDto, String idRestaurante) {
@@ -31,10 +28,6 @@ public class ProdutoService {
             throw new ResponseStatusException(404, "Restaurante não encontrado!", null);
         }
         final var novoProduto = ProdutoMapper.of(produtoCriacaoDto, idRestaurante);
-
-        final String id = generateRandomIdUsecase.execute();
-        novoProduto.setId(id);
-
         return this.repository.save(novoProduto);
     }
 
@@ -44,7 +37,7 @@ public class ProdutoService {
                 : repository.findAllByIdRestaurante(idRestaurante);
     }
 
-    public Produto update(ProdutoUpdateDto produtoUpdateDto, String idPedido) {
+    public Produto update(ProdutoUpdateDto produtoUpdateDto, Long idPedido) {
         final var produtoAtual = this.repository
                 .findById(idPedido)
                 .orElseThrow(
@@ -61,18 +54,18 @@ public class ProdutoService {
         return this.repository.save(produtoAtual);
     }
 
-    public void delete(String idProduto) {
+    public void delete(Long idProduto) {
         if (!repository.existsById(idProduto)) {
             throw new ResponseStatusException(404, String.format("Produto com id %s não encontrado", idProduto), null);
         }
         this.repository.deleteById(idProduto);
     }
 
-    public boolean existsById(String id) {
+    public boolean existsById(Long id) {
         return repository.existsById(id);
     }
 
-    public Optional<Produto> getById(String idProduto) {
+    public Optional<Produto> getById(Long idProduto) {
         return repository.findById(idProduto);
     }
 }

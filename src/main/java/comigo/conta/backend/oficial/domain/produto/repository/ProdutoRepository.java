@@ -6,7 +6,7 @@ import comigo.conta.backend.oficial.domain.produto.Produto;
 
 import java.util.List;
 
-public interface ProdutoRepository extends JpaRepository<Produto, String> {
+public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     List<Produto> findByIdRestauranteAndCategoria(String idRestaurante, Categoria categoria);
     List<Produto> findAllByIdRestaurante(String id);
 }

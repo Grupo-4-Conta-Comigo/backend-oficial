@@ -2,15 +2,14 @@ package comigo.conta.backend.oficial.domain.produto;
 
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class Produto {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nome;
     private Categoria categoria;
     private double preco;
@@ -28,7 +27,7 @@ public class Produto {
         this.idRestaurante = idRestaurante;
     }
 
-    public Produto(String id, String nome, Categoria categoria, double preco, String idRestaurante) {
+    public Produto(Long id, String nome, Categoria categoria, double preco, String idRestaurante) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
@@ -68,11 +67,11 @@ public class Produto {
         this.idRestaurante = idRestaurante;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

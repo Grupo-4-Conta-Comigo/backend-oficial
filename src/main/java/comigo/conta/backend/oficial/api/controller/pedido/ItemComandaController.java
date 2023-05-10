@@ -1,6 +1,7 @@
 package comigo.conta.backend.oficial.api.controller.pedido;
 
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
+import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.ItemComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/itens-comanda")
@@ -74,8 +76,11 @@ public class ItemComandaController {
             ),
     })
     @GetMapping("/todos/{idComanda}")
-    public ResponseEntity<List<ItemComanda>> getAll(@PathVariable String idComanda) {
-        final List<ItemComanda> itens = itemComandaService.getAll(idComanda);
+    public ResponseEntity<List<ItemComanda>> getAll(
+            @PathVariable String idComanda,
+            @RequestParam Optional<Categoria> categoria
+    ) {
+        final List<ItemComanda> itens = itemComandaService.getAll(idComanda, categoria);
         return itens.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(itens);
     }
 

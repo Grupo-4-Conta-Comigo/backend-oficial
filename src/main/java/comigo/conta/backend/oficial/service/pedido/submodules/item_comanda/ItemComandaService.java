@@ -3,6 +3,7 @@ package comigo.conta.backend.oficial.service.pedido.submodules.item_comanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.repository.ItemComandaRepository;
+import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
@@ -44,11 +45,16 @@ public class ItemComandaService {
         return itemComandaRepository.save(novoItemComanda);
     }
 
-    public List<ItemComanda> getAll(String idComanda) {
+    public List<ItemComanda> getAll(
+            String idComanda,
+            Optional<Categoria> categoria
+    ) {
         if (!comandaService.existsById(idComanda)) {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
         }
-        return itemComandaRepository.findAllByComandaId(idComanda);
+        return categoria.isPresent()
+                ? itemComandaRepository.findByComanda_IdAndProduto_Categoria(idComanda, categoria.get())
+                : itemComandaRepository.findAllByComandaId(idComanda);
     }
 
     public Optional<ItemComanda> getById(String idItemComanda) {
@@ -73,7 +79,7 @@ public class ItemComandaService {
 
     public void deletar(String idItemComanda) {
         if (!itemComandaRepository.existsById(idItemComanda)) {
-            throw  new ResponseStatusException(404,"Item da Comanda não encontrado!",null);
+            throw new ResponseStatusException(404, "Item da Comanda não encontrado!", null);
         }
         itemComandaRepository.deleteById(idItemComanda);
     }

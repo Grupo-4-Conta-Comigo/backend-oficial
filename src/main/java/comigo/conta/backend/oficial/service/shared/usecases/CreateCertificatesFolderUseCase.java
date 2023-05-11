@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Path;
 
 @Service
-public interface ArquivoExisteUseCase {
-    boolean execute(Path path);
+public interface CreateCertificatesFolderUseCase {
+    void execute(Path path);
 }

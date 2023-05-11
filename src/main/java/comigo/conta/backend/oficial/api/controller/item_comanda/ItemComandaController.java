@@ -1,4 +1,4 @@
-package comigo.conta.backend.oficial.api.controller.pedido;
+package comigo.conta.backend.oficial.api.controller.item_comanda;
 
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 import comigo.conta.backend.oficial.domain.produto.Categoria;

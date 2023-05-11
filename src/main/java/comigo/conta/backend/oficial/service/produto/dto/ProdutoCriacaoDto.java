@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 public class ProdutoCriacaoDto {
     @NotBlank
     private String nome;
-    @NotBlank
     private Categoria categoria;
     @DecimalMin("0.0")
     @NotNull

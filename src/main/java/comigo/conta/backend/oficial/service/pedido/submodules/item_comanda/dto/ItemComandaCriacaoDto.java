@@ -4,12 +4,13 @@ import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemComanda;
 import comigo.conta.backend.oficial.domain.produto.Produto;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 public class ItemComandaCriacaoDto {
     @NotBlank
     private String idComanda;
-    @NotBlank
+    @Min(1)
     private Long idProduto;
     private String observacao;
 

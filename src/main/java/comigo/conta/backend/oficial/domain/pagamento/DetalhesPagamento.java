@@ -1,11 +1,11 @@
 package comigo.conta.backend.oficial.domain.pagamento;
 
-import comigo.conta.backend.oficial.domain.usuario.Usuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import java.io.File;
+import java.util.Arrays;
 
 @Entity
 public class DetalhesPagamento {
@@ -14,9 +14,12 @@ public class DetalhesPagamento {
     private String chavePix;
     private String clientId;
     private String clientSecret;
-    private File certificado;
-    @OneToOne
-    private Usuario usuarioId;
+    @JsonIgnore
+    @Column(length = 1024 * 1024)
+    private byte[] certificado;
+    private String nomeCertificado;
+    @Column(unique = true)
+    private String usuarioId;
 
     public String getId() {
         return id;
@@ -50,11 +53,36 @@ public class DetalhesPagamento {
         this.clientSecret = clientSecret;
     }
 
-    public File getCertificado() {
+    public byte[] getCertificado() {
         return certificado;
     }
 
-    public void setCertificado(File certificado) {
+    public void setCertificado(byte[] certificado) {
         this.certificado = certificado;
+    }
+
+    public String getNomeCertificado() {
+        return nomeCertificado;
+    }
+
+    public void setNomeCertificado(String nomeCertificado) {
+        this.nomeCertificado = nomeCertificado;
+    }
+
+    public void setUsuarioId(String usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    @Override
+    public String toString() {
+        return "DetalhesPagamento{" +
+                "id='" + id + '\'' +
+                ", chavePix='" + chavePix + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", certificado=" + Arrays.toString(certificado) +
+                ", nomeCertificado='" + nomeCertificado + '\'' +
+                ", usuarioId='" + usuarioId + '\'' +
+                '}';
     }
 }

@@ -8,6 +8,7 @@ public class UsuarioTokenDto {
     private String registro;
     private Cargo cargo;
     private String email;
+    private String restauranteId;
     private String token;
 
     public String getUserId() {
@@ -56,5 +57,13 @@ public class UsuarioTokenDto {
 
     public void setCargo(Cargo cargo) {
         this.cargo = cargo;
+    }
+
+    public String getRestauranteId() {
+        return restauranteId;
+    }
+
+    public void setRestauranteId(String restauranteId) {
+        this.restauranteId = restauranteId;
     }
 }

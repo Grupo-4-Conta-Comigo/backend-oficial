@@ -25,6 +25,7 @@ public class UsuarioMapper {
         usuario.setNome(usuarioAutenticado.getNome());
         usuario.setRegistro(usuarioAutenticado.getRegistro());
         usuario.setCargo(usuarioAutenticado.getCargo());
+        usuario.setRestauranteId(usuarioAutenticado.getRestauranteId());
         usuario.setEmail(usuarioAutenticado.getEmail());
         usuario.setToken(token);
 

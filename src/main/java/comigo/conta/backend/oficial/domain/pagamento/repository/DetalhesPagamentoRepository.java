@@ -9,4 +9,5 @@ public interface DetalhesPagamentoRepository extends JpaRepository<DetalhesPagam
     void deleteByUsuarioId(String usuarioId);
     boolean existsByUsuarioId(String usuarioId);
     Optional<DetalhesPagamento> findByUsuarioId(String id);
+
 }

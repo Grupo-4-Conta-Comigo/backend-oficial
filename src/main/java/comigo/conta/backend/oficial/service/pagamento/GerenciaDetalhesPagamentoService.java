@@ -23,15 +23,21 @@ public class GerenciaDetalhesPagamentoService {
         this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
-    public DetalhesPagamento criarNovo(DetalhesPagamentoCriacaoDto detalhesPagamentoCriacaoDto, String idRestaurante) {
+    public DetalhesPagamento criarNovo(
+            DetalhesPagamentoCriacaoDto detalhesPagamentoCriacaoDto,
+            String idRestaurante
+    ) {
         if (usuarioService.naoExiste(idRestaurante)) {
             throw new ResponseStatusException(404, "Usuário não existe...", null);
         }
-        DetalhesPagamento detalhesPagamento = getDetalhesPagamento(idRestaurante).orElseGet(() -> criarDetalhesPagamentoDoZero(idRestaurante));
+        DetalhesPagamento detalhesPagamento =
+                getDetalhesPagamento(idRestaurante)
+                .orElseGet(
+                        () -> criarDetalhesPagamentoDoZero(idRestaurante)
+                );
         detalhesPagamento.setChavePix(detalhesPagamentoCriacaoDto.getChavePix());
         detalhesPagamento.setClientId(detalhesPagamentoCriacaoDto.getClientId());
         detalhesPagamento.setClientSecret(detalhesPagamentoCriacaoDto.getClientSecret());
-        System.out.println(detalhesPagamento.getId());
 
         return repository.save(detalhesPagamento);
     }

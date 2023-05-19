@@ -7,10 +7,7 @@ import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUseca
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioLoginDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioTokenDto;
-import comigo.conta.backend.oficial.service.usuario.dto.GarcomCriacaoDto;
-import comigo.conta.backend.oficial.service.usuario.dto.GarcomEdicaoDto;
-import comigo.conta.backend.oficial.service.usuario.dto.RestauranteCriacaoDto;
-import comigo.conta.backend.oficial.service.usuario.dto.UsuarioMapper;
+import comigo.conta.backend.oficial.service.usuario.dto.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -114,6 +111,10 @@ public class UsuarioService {
 
     public Optional<Usuario> findGarcomById(String idGarcom) {
         return repository.findById(idGarcom);
+    }
+
+    public Optional<UsuarioNomeDocumentoDto> findNomeDocumentoById(String idRestaurante) {
+        return repository.findNomeRegistroById(idRestaurante);
     }
 
     public Usuario editarGarcom(GarcomEdicaoDto garcomEdicaoDto, String idGarcom) {

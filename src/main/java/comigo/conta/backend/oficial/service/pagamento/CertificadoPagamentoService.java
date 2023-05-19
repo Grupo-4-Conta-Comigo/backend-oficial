@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -47,7 +48,7 @@ public class CertificadoPagamentoService {
         return cadastrarCertificadoNoBancoDeDados(idRestaurante, certificado);
     }
 
-    public boolean certificadoExiste(String idRestaurante) {
+    public boolean certificadoExisteNoBanco(String idRestaurante) {
         if (usuarioService.naoExiste(idRestaurante)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado...");
         }
@@ -57,6 +58,15 @@ public class CertificadoPagamentoService {
                                 detalhesPagamento.getCertificado().length != 0 ||
                                         detalhesPagamento.getCertificado() != null
                 ).orElse(false);
+    }
+
+    private File getDiretorioPaiDoCertificado(String idRestaurante) {
+        return new File(FileUtils.PAYMENT_DETAILS_CERTIFICATES_PATH.toFile(), idRestaurante);
+    }
+
+    public boolean certificadoExisteLocalmente(String idRestaurante, String nomeArquivo) {
+        File diretorioPai = getDiretorioPaiDoCertificado(idRestaurante);
+        return new File(diretorioPai, nomeArquivo).exists();
     }
 
     private Optional<File> getCertificadoLocal(File diretorioPaiCertificado) {
@@ -103,29 +113,29 @@ public class CertificadoPagamentoService {
         }
     }
 
-    private Path getRealCertificadoPath(String idRestaurante, MultipartFile certificado) {
+    public Path getRealCertificadoPath(String idRestaurante, String nomeCertificado) {
         return Path.of(
                 FileUtils.PAYMENT_DETAILS_CERTIFICATES_PATH.toString(),
                 idRestaurante,
-                certificado.getOriginalFilename()
+                nomeCertificado
         );
     }
 
-    private void criarCertificadoLocalmente(
-            MultipartFile certificado,
-            Path pathCertificado,
-            String idRestaurante
+    public void criarCertificadoLocalmente(
+            byte[] certificado,
+            String idRestaurante,
+            String nomeCertificado
     ) {
         try {
             Files.createDirectory(
                     FileUtils.PAYMENT_DETAILS_CERTIFICATES_PATH.resolve(idRestaurante)
             );
             Files.createFile(
-                    pathCertificado
+                    getRealCertificadoPath(idRestaurante, nomeCertificado)
             );
             Files.copy(
-                    certificado.getInputStream(),
-                    pathCertificado,
+                    new ByteArrayInputStream(certificado),
+                    getRealCertificadoPath(idRestaurante, nomeCertificado),
                     StandardCopyOption.REPLACE_EXISTING
             );
         } catch (FileAlreadyExistsException e) {
@@ -136,7 +146,7 @@ public class CertificadoPagamentoService {
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     String.format(
                             "Erro ao salvar o arquivo %s localmente",
-                            certificado.getOriginalFilename()
+                            nomeCertificado
                     )
             );
         }

@@ -5,6 +5,10 @@ import comigo.conta.backend.oficial.service.pagamento.CertificadoPagamentoServic
 import comigo.conta.backend.oficial.service.pagamento.GerenciaDetalhesPagamentoService;
 import comigo.conta.backend.oficial.service.pagamento.RealizarPagamentosService;
 import comigo.conta.backend.oficial.service.pagamento.dto.DetalhesPagamentoCriacaoDto;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,23 @@ public class GerenciaDetalhesPagamentoController {
         this.realizarPagamentosService = realizarPagamentosService;
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PutMapping("/criar/{idRestaurante}")
     public ResponseEntity<DetalhesPagamento> postDetalhesPagamento(
             @PathVariable String idRestaurante,
@@ -35,6 +56,27 @@ public class GerenciaDetalhesPagamentoController {
         );
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PutMapping("/certificados/criar/{idRestaurante}")
     public ResponseEntity<DetalhesPagamento> postCertificado(
             @PathVariable String idRestaurante,
@@ -43,21 +85,93 @@ public class GerenciaDetalhesPagamentoController {
         return ResponseEntity.ok(certificadoPagamentoService.cadastrarCertificado(idRestaurante, certificado));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @GetMapping("/certificados/{idRestaurante}")
     public ResponseEntity<Boolean> certificadoExiste(@PathVariable String idRestaurante) {
         return ResponseEntity.ok(certificadoPagamentoService.certificadoExisteNoBanco(idRestaurante));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @GetMapping("/{idRestaurante}")
     public ResponseEntity<DetalhesPagamento> getDetalhesPagamento(@PathVariable String idRestaurante) {
         return ResponseEntity.of(gerenciaDetalhesPagamentoService.getDetalhesPagamento(idRestaurante));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PutMapping("/testar-pagamentos/{idRestaurante}")
     public ResponseEntity<Boolean> testarPagamento(@PathVariable String idRestaurante) {
         return ResponseEntity.ok(realizarPagamentosService.realizarPagamentoParaTeste(idRestaurante));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @DeleteMapping("/{idRestaurante}")
     public ResponseEntity<Void> deletarDetalhesPagamento(@PathVariable String idRestaurante) {
         gerenciaDetalhesPagamentoService.deletar(idRestaurante);

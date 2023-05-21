@@ -99,8 +99,8 @@ public class PedidoService {
         repository.deleteById(idPedido);
     }
 
-    public boolean existe(String idPedido) {
-        return repository.existsById(idPedido);
+    public boolean naoExiste(String idPedido) {
+        return !repository.existsById(idPedido);
     }
 
     private Pedido getPedidoOrElseThrow(String idPedido) {
@@ -114,7 +114,7 @@ public class PedidoService {
     }
 
     private void verificaPedidoExiste(final String idPedido) {
-        if (!existe(idPedido)) {
+        if (naoExiste(idPedido)) {
             throw new ResponseStatusException(404, "Pedido não encontrado...", null);
         }
     }

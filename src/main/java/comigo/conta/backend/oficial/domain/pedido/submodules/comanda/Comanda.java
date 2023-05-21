@@ -18,6 +18,7 @@ public class Comanda {
     private String id;
     private String nomeDono;
     private Status status;
+    private Integer idQRCodePix;
     @ManyToOne
     private Pedido pedido;
     @OneToMany(mappedBy = "comanda")
@@ -62,5 +63,13 @@ public class Comanda {
 
     public void setItensComanda(List<ItemComanda> itensComanda) {
         this.itensComanda = itensComanda;
+    }
+
+    public Integer getIdQRCodePix() {
+        return idQRCodePix;
+    }
+
+    public void setIdQRCodePix(Integer idQRCodePix) {
+        this.idQRCodePix = idQRCodePix;
     }
 }

@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class RealizarPagamentosService {
@@ -30,31 +31,20 @@ public class RealizarPagamentosService {
 
     public boolean realizarPagamentoParaTeste(String idRestaurante) {
         DetalhesPagamento detalhesPagamento = getDetalhesPagamentoOrThrow404(idRestaurante);
-        if (!certificadoPagamentoService.certificadoExisteLocalmente(
-                idRestaurante,
-                detalhesPagamento.getNomeCertificado()
-        )) {
-            certificadoPagamentoService.criarCertificadoLocalmente(
-                    detalhesPagamento.getCertificado(),
-                    idRestaurante,
-                    detalhesPagamento.getNomeCertificado()
-            );
-        }
-        UsuarioNomeDocumentoDto usuario = usuarioService
-                .findNomeDocumentoById(idRestaurante)
-                .orElseThrow(
-                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado...")
-                );
-        return realizarPagamento(
-                detalhesPagamento,
-                idRestaurante,
-                usuario.getNome(),
-                usuario.getDocumento(),
-                1
-        ) > 0;
+        criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
+        UsuarioNomeDocumentoDto usuario = getUsuarioNomeDocumentoOrThrow404(idRestaurante);
+        return Objects.nonNull(
+                realizarPagamento(
+                        detalhesPagamento,
+                        idRestaurante,
+                        usuario.getNome(),
+                        usuario.getDocumento(),
+                        1
+                )
+        );
     }
 
-    private int realizarPagamento(
+    private Integer realizarPagamento(
             DetalhesPagamento detalhesPagamento,
             String idRestaurante,
             String nome,
@@ -81,6 +71,7 @@ public class RealizarPagamentosService {
             Gerencianet gn = new Gerencianet(options);
             Map<String, Object> response = gn.call("pixCreateDueCharge", params, body);
             System.out.println(response);
+            @SuppressWarnings("unchecked")
             Map<String, Object> loc = (Map<String, Object>) response.get("loc");
             return (int) loc.get("id");
         } catch (GerencianetException e) {
@@ -94,9 +85,23 @@ public class RealizarPagamentosService {
         }
     }
 
+    private UsuarioNomeDocumentoDto getUsuarioNomeDocumentoOrThrow404(String idRestaurante) {
+        return usuarioService
+                .findNomeDocumentoById(idRestaurante)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado...")
+                );
+    }
 
-
-
+    private void criarArquivoSeNaoExiste(String idRestaurante, DetalhesPagamento detalhesPagamento) {
+        if (!certificadoPagamentoService.certificadoExisteLocalmente(idRestaurante, detalhesPagamento.getNomeCertificado())) {
+            certificadoPagamentoService.criarCertificadoLocalmente(
+                    detalhesPagamento.getCertificado(),
+                    idRestaurante,
+                    detalhesPagamento.getNomeCertificado()
+            );
+        }
+    }
     private DetalhesPagamento getDetalhesPagamentoOrThrow404(String idRestaurante) {
         return gerenciaDetalhesPagamentoService
                 .getDetalhesPagamento(idRestaurante)

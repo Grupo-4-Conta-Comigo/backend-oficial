@@ -12,12 +12,14 @@ public class ComandaResponseDto {
     private final String nomeDono;
     private final Status status;
     private final double preco;
+    private final Integer idQRCodePix;
     private final List<ItemComanda> itensComanda;
 
     public ComandaResponseDto(Comanda comanda) {
         this.id = comanda.getId();
         this.nomeDono = comanda.getNomeDono();
         this.status = comanda.getStatus();
+        this.idQRCodePix = comanda.getIdQRCodePix();
         this.preco = new GetPriceFromComandaUsecase().execute(comanda);
         this.itensComanda = comanda.getItensComanda();
     }
@@ -40,5 +42,9 @@ public class ComandaResponseDto {
 
     public double getPreco() {
         return preco;
+    }
+
+    public Integer getIdQRCodePix() {
+        return idQRCodePix;
     }
 }

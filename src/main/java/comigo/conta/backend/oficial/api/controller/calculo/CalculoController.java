@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/calculos")
-@Tag(name = "Cálculos", description = "Grupo de requisições de Cálculos")
+@Tag(name = "Cálculos", description = "Grupo de requisições de Cálculos"    )
 public class CalculoController {
     private final CalculoService calculoService;
 

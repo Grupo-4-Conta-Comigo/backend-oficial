@@ -29,7 +29,7 @@ public class ComandaService {
     }
 
     public Comanda criar(ComandaCriacaoDto comandaCriacaoDto, String idPedido) {
-        if (!pedidoService.existe(idPedido)) {
+        if (pedidoService.naoExiste(idPedido)) {
             throw new ResponseStatusException(404, "Pedido não encontrado!", null);
         }
         final Comanda novaComanda = comandaCriacaoDto.toEntity(idPedido);
@@ -44,7 +44,7 @@ public class ComandaService {
     }
 
     public List<Comanda> getAll(String idPedido, Optional<Boolean> ativos) {
-        if (!pedidoService.existe(idPedido)) {
+        if (pedidoService.naoExiste(idPedido)) {
             throw new ResponseStatusException(404, "Pedido não encontrado!", null);
         }
         if (ativos.isPresent()) {

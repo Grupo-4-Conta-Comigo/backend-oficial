@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/detalhes-pagamento")
+@Tag(name = "Detalhes de Pagamento", description = "Grupo de requisições de Detalhes de Pagamento")
 public class GerenciaDetalhesPagamentoController {
     private final GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService;
     private final CertificadoPagamentoService certificadoPagamentoService;

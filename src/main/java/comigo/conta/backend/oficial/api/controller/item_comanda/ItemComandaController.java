@@ -105,9 +105,9 @@ public class ItemComandaController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
-    @GetMapping("/todos/pedido/{idComanda}")
-    public ResponseEntity<List<ItemComandaDoPedido>> getAllFromPedido(@PathVariable String idComanda) {
-        final List<ItemComandaDoPedido> itens = itemComandaService.getAllFromPedido(idComanda);
+    @GetMapping("/todos/pedido/{idPedido}")
+    public ResponseEntity<List<ItemComandaDoPedido>> getAllFromPedido(@PathVariable String idPedido) {
+        final List<ItemComandaDoPedido> itens = itemComandaService.getAllFromPedido(idPedido);
         return itens.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(itens);
     }
 

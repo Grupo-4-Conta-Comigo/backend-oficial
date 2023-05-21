@@ -4,6 +4,7 @@ import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemCo
 import comigo.conta.backend.oficial.domain.produto.Categoria;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.ItemComandaService;
 import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaCriacaoDto;
+import comigo.conta.backend.oficial.service.pedido.submodules.item_comanda.dto.ItemComandaDoPedido;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -81,6 +82,32 @@ public class ItemComandaController {
             @RequestParam Optional<Categoria> categoria
     ) {
         final List<ItemComanda> itens = itemComandaService.getAll(idComanda, categoria);
+        return itens.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(itens);
+    }
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "204",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
+    @GetMapping("/todos/{idComanda}")
+    public ResponseEntity<List<ItemComandaDoPedido>> getAllFromPedido(@PathVariable String idComanda) {
+        final List<ItemComandaDoPedido> itens = itemComandaService.getAllFromPedido(idComanda);
         return itens.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(itens);
     }
 

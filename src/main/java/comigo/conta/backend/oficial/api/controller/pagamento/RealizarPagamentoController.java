@@ -2,15 +2,13 @@ package comigo.conta.backend.oficial.api.controller.pagamento;
 
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.service.pagamento.RealizarPagamentosService;
+import comigo.conta.backend.oficial.service.pagamento.dto.CobrancaDetailsDto;
 import comigo.conta.backend.oficial.service.pagamento.dto.CriarPagamentoDto;
 import comigo.conta.backend.oficial.service.pagamento.dto.GetQRCodeDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -42,6 +40,19 @@ public class RealizarPagamentoController {
                 realizarPagamentosService.getQRCode(
                         getQRCodeDto.getIdComanda(),
                         getQRCodeDto.getIdRestaurante()
+                )
+        );
+    }
+
+    @GetMapping("/restaurante/{idRestaurante}/comanda/{idComanda}/consultar-cobranca")
+    public ResponseEntity<CobrancaDetailsDto> getCobrancaDetails(
+            @PathVariable String idComanda,
+            @PathVariable String idRestaurante
+    ) {
+        return ok(
+                realizarPagamentosService.getCobrancaDetails(
+                        idRestaurante,
+                        idComanda
                 )
         );
     }

@@ -40,7 +40,7 @@ public class ItemComandaService {
         if (!produtoService.existsById(itemComandaCriacaoDto.getIdProduto())) {
             throw new ResponseStatusException(404, "Produto não encontrado!", null);
         }
-        if (!comandaService.existsById(itemComandaCriacaoDto.getIdComanda())) {
+        if (comandaService.notExistsById(itemComandaCriacaoDto.getIdComanda())) {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
         }
 
@@ -56,7 +56,7 @@ public class ItemComandaService {
             String idComanda,
             Optional<Categoria> categoria
     ) {
-        if (!comandaService.existsById(idComanda)) {
+        if (comandaService.notExistsById(idComanda)) {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
         }
         return categoria.isPresent()

@@ -75,10 +75,10 @@ public class ComandaService {
         return comandaRepository.save(comandaAtual);
     }
 
-    public void updateComandaQRCodeId(String idComanda, Integer idQRCodePix) {
+    public Comanda updateComandaQRCodeId(String idComanda, Integer idQRCodePix) {
         final Comanda comanda = getComandaOrThrow404(idComanda);
         comanda.setIdQRCodePix(idQRCodePix);
-        comandaRepository.save(comanda);
+        return comandaRepository.save(comanda);
     }
 
     public void deletar(String idComanda) {
@@ -88,7 +88,7 @@ public class ComandaService {
         comandaRepository.deleteById(idComanda);
     }
 
-    private Comanda getComandaOrThrow404(String idComanda) {
+    public Comanda getComandaOrThrow404(String idComanda) {
         return this.comandaRepository
                 .findById(idComanda)
                 .orElseThrow(

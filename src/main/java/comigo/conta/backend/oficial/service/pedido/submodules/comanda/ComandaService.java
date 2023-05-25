@@ -77,7 +77,7 @@ public class ComandaService {
 
     public Comanda updateComandaQRCodeId(String idComanda, Integer idQRCodePix) {
         final Comanda comanda = getComandaOrThrow404(idComanda);
-        comanda.setIdQRCodePix(idQRCodePix);
+        comanda.getIdQRCodePix().add(0, idQRCodePix);
         return comandaRepository.save(comanda);
     }
 

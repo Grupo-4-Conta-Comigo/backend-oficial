@@ -12,7 +12,7 @@ public class ComandaResponseDto {
     private final String nomeDono;
     private final Status status;
     private final double preco;
-    private final Integer idQRCodePix;
+    private final List<Integer> idQRCodePix;
     private final List<ItemComanda> itensComanda;
 
     public ComandaResponseDto(Comanda comanda) {
@@ -44,7 +44,7 @@ public class ComandaResponseDto {
         return preco;
     }
 
-    public Integer getIdQRCodePix() {
+    public List<Integer> getIdQRCodePix() {
         return idQRCodePix;
     }
 }

@@ -5,10 +5,7 @@ import comigo.conta.backend.oficial.domain.pedido.submodules.item_comanda.ItemCo
 import comigo.conta.backend.oficial.domain.shared.Status;
 import comigo.conta.backend.oficial.domain.pedido.Pedido;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +15,8 @@ public class Comanda {
     private String id;
     private String nomeDono;
     private Status status;
-    private Integer idQRCodePix;
+    @ElementCollection
+    private List<Integer> idQRCodePix;
     @ManyToOne
     private Pedido pedido;
     @OneToMany(mappedBy = "comanda")
@@ -65,11 +63,11 @@ public class Comanda {
         this.itensComanda = itensComanda;
     }
 
-    public Integer getIdQRCodePix() {
+    public List<Integer> getIdQRCodePix() {
         return idQRCodePix;
     }
 
-    public void setIdQRCodePix(Integer idQRCodePix) {
+    public void setIdQRCodePix(List<Integer> idQRCodePix) {
         this.idQRCodePix = idQRCodePix;
     }
 }

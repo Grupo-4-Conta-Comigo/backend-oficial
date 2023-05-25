@@ -69,7 +69,7 @@ public class RealizarPagamentosService {
         criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
         Comanda comanda = comandaService.getComandaOrThrow404(idComanda);
         return criarQRCode(
-                comanda.getIdQRCodePix(),
+                comanda.getIdQRCodePix().get(comanda.getIdQRCodePix().size() - 1),
                 idRestaurante,
                 detalhesPagamento
         );
@@ -82,7 +82,7 @@ public class RealizarPagamentosService {
         DetalhesPagamento detalhesPagamento = getDetalhesPagamentoOrThrow404(idRestaurante);
         criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
         Comanda comanda = comandaService.getComandaOrThrow404(idComanda);
-        String txid = getCobrancaTXID(comanda.getIdQRCodePix(), detalhesPagamento, idRestaurante);
+        String txid = getCobrancaTXID(comanda.getIdQRCodePix().get(comanda.getIdQRCodePix().size() - 1), detalhesPagamento, idRestaurante);
         Map<String, Object> result = getDetalhesDeCobranca(detalhesPagamento, idRestaurante, txid);
         return new CobrancaDetailsDto(result);
     }

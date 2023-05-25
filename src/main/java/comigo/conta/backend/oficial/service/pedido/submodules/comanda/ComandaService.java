@@ -39,8 +39,8 @@ public class ComandaService {
 
         return this.comandaRepository.save(novaComanda);
     }
-    public Optional<Comanda> getById(String idPedido) {
-        return comandaRepository.findById(idPedido);
+    public Optional<Comanda> getById(String idComanda) {
+        return comandaRepository.findById(idComanda);
     }
 
     public List<Comanda> getAll(String idPedido, Optional<Boolean> ativos) {
@@ -75,6 +75,12 @@ public class ComandaService {
         return comandaRepository.save(comandaAtual);
     }
 
+    public void updateComandaQRCodeId(String idComanda, Integer idQRCodePix) {
+        final Comanda comanda = getComandaOrThrow404(idComanda);
+        comanda.setIdQRCodePix(idQRCodePix);
+        comandaRepository.save(comanda);
+    }
+
     public void deletar(String idComanda) {
         if (!comandaRepository.existsById(idComanda)) {
             throw new ResponseStatusException(404, "Comanda não encontrada!", null);
@@ -90,8 +96,8 @@ public class ComandaService {
                 );
     }
 
-    public boolean existsById(String idComanda) {
-        return comandaRepository.existsById(idComanda);
+    public boolean notExistsById(String idComanda) {
+        return !comandaRepository.existsById(idComanda);
     }
 
     public double getPreco(String idComanda) {

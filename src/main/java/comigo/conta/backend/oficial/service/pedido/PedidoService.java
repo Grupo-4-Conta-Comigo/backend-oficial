@@ -58,8 +58,6 @@ public class PedidoService {
         if (orderByOldest.orElse(false)) {
             pedidos = sortPedidosOldestToNewests.sort(new ListaObj<>(pedidos)).toList();
         }
-
-        System.out.println(pedidos);
         return pedidos;
     }
 

@@ -4,6 +4,7 @@ import br.com.gerencianet.gnsdk.Gerencianet;
 import br.com.gerencianet.gnsdk.exceptions.GerencianetException;
 import com.mifmif.common.regex.Generex;
 import comigo.conta.backend.oficial.domain.pagamento.DetalhesPagamento;
+import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import comigo.conta.backend.oficial.service.usuario.dto.UsuarioNomeDocumentoDto;
 import org.json.JSONObject;
@@ -22,11 +23,13 @@ public class RealizarPagamentosService {
     private final CertificadoPagamentoService certificadoPagamentoService;
     private final GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService;
     private final UsuarioService usuarioService;
+    private final ComandaService comandaService;
 
-    public RealizarPagamentosService(CertificadoPagamentoService certificadoPagamentoService, GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService, UsuarioService usuarioService) {
+    public RealizarPagamentosService(CertificadoPagamentoService certificadoPagamentoService, GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService, UsuarioService usuarioService, ComandaService comandaService) {
         this.certificadoPagamentoService = certificadoPagamentoService;
         this.gerenciaDetalhesPagamentoService = gerenciaDetalhesPagamentoService;
         this.usuarioService = usuarioService;
+        this.comandaService = comandaService;
     }
 
     public boolean realizarPagamentoParaTeste(String idRestaurante) {
@@ -42,6 +45,20 @@ public class RealizarPagamentosService {
                         1
                 )
         );
+    }
+
+    public void criarPagamento(String idRestaurante, String idComanda, double valor) {
+        DetalhesPagamento detalhesPagamento = getDetalhesPagamentoOrThrow404(idRestaurante);
+        criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
+        UsuarioNomeDocumentoDto usuario = getUsuarioNomeDocumentoOrThrow404(idRestaurante);
+        Integer idPagamento = realizarPagamento(
+                detalhesPagamento,
+                idRestaurante,
+                usuario.getNome(),
+                usuario.getDocumento(),
+                valor
+        );
+        comandaService.updateComandaQRCodeId(idComanda, idPagamento);
     }
 
     private Integer realizarPagamento(
@@ -102,6 +119,7 @@ public class RealizarPagamentosService {
             );
         }
     }
+
     private DetalhesPagamento getDetalhesPagamentoOrThrow404(String idRestaurante) {
         return gerenciaDetalhesPagamentoService
                 .getDetalhesPagamento(idRestaurante)

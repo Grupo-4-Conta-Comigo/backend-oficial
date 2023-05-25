@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.ResponseEntity.*;
+
 @RestController
 @RequestMapping("/comandas")
 @Tag(name = "Comandas", description = "Grupo de requisições de Comandas")
@@ -53,7 +55,7 @@ public class ComandaController {
             @PathVariable String idPedido,
             @RequestBody @Validated ComandaCriacaoDto comandaCriacaoDto
     ) {
-        return ResponseEntity.status(201).body(
+        return status(201).body(
                 new ComandaResponseDto(
                         comandaService.criar(comandaCriacaoDto, idPedido)
                 )
@@ -79,9 +81,9 @@ public class ComandaController {
     })
     @GetMapping("/{idPedido}")
     public ResponseEntity<ComandaResponseDto> getComandaById(@PathVariable String idPedido) {
-        return ResponseEntity.of(
+        return of(
                 comandaService.getById(idPedido)
-                .map(ComandaResponseDto::new)
+                        .map(ComandaResponseDto::new)
         );
     }
 
@@ -113,8 +115,8 @@ public class ComandaController {
     ) {
         final List<Comanda> comandas = this.comandaService.getAll(idPedido, ativos);
         return comandas.isEmpty() ?
-                ResponseEntity.status(204).build() :
-                ResponseEntity.ok(comandaToComandaDto(comandas));
+                status(204).build() :
+                ok(comandaToComandaDto(comandas));
     }
 
     @ApiResponses({
@@ -136,7 +138,7 @@ public class ComandaController {
     })
     @GetMapping("/preco/{idComanda}")
     public ResponseEntity<Double> getPreco(@PathVariable String idComanda) {
-        return ResponseEntity.ok(comandaService.getPreco(idComanda));
+        return ok(comandaService.getPreco(idComanda));
     }
 
     @ApiResponses({
@@ -165,7 +167,7 @@ public class ComandaController {
             @PathVariable String idComanda,
             @RequestBody @Validated ComandaUpdateDto comandaUpdateDto
     ) {
-        return ResponseEntity.ok(
+        return ok(
                 new ComandaResponseDto(
                         comandaService.editar(idComanda, comandaUpdateDto)
                 )
@@ -191,7 +193,7 @@ public class ComandaController {
     })
     @PatchMapping("/finalizar/{idComanda}")
     public ResponseEntity<ComandaResponseDto> finalizarComanda(@PathVariable String idComanda) {
-        return ResponseEntity.ok(
+        return ok(
                 new ComandaResponseDto(
                         comandaService.finalizar(idComanda)
                 )
@@ -218,7 +220,7 @@ public class ComandaController {
     @DeleteMapping("/deletar/{idComanda}")
     public ResponseEntity<Void> deletarComanda(@PathVariable String idComanda) {
         this.comandaService.deletar(idComanda);
-        return ResponseEntity.status(200).build();
+        return status(200).build();
     }
 
     List<ComandaResponseDto> comandaToComandaDto(List<Comanda> comandas) {

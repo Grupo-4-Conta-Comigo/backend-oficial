@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 public class ProdutoUpdateDto {
     @NotBlank
     private String nome;
-    @NotBlank
     private Categoria categoria;
     @DecimalMin("0.0")
     private double preco;

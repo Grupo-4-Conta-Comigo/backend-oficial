@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -45,7 +47,7 @@ public class RealizarPagamentoController {
     }
 
     @GetMapping("/restaurante/{idRestaurante}/comanda/{idComanda}/consultar-cobranca")
-    public ResponseEntity<CobrancaDetailsDto> getCobrancaDetails(
+    public ResponseEntity<List<CobrancaDetailsDto>> getCobrancaDetails(
             @PathVariable String idComanda,
             @PathVariable String idRestaurante
     ) {

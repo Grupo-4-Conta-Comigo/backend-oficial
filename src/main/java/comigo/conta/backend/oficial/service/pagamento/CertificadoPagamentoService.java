@@ -120,6 +120,13 @@ public class CertificadoPagamentoService {
                 nomeCertificado
         );
     }
+    public static Path getRealCertificadoPathStatic(String idRestaurante, String nomeCertificado) {
+        return Path.of(
+                FileUtils.PAYMENT_DETAILS_CERTIFICATES_PATH.toString(),
+                idRestaurante,
+                nomeCertificado
+        );
+    }
 
     public void criarCertificadoLocalmente(
             byte[] certificado,

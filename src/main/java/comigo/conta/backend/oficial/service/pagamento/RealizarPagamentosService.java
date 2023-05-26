@@ -6,6 +6,7 @@ import com.mifmif.common.regex.Generex;
 import comigo.conta.backend.oficial.domain.pagamento.DetalhesPagamento;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.service.pagamento.dto.CobrancaDetailsDto;
+import comigo.conta.backend.oficial.service.pagamento.usecases.GetCobrancaDetailsUseCase;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import comigo.conta.backend.oficial.service.usuario.dto.UsuarioNomeDocumentoDto;
@@ -18,8 +19,13 @@ import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class RealizarPagamentosService {
@@ -75,16 +81,37 @@ public class RealizarPagamentosService {
         );
     }
 
-    public CobrancaDetailsDto getCobrancaDetails(
+    public List<CobrancaDetailsDto> getCobrancaDetails(
             String idRestaurante,
             String idComanda
     ) {
         DetalhesPagamento detalhesPagamento = getDetalhesPagamentoOrThrow404(idRestaurante);
         criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
         Comanda comanda = comandaService.getComandaOrThrow404(idComanda);
-        String txid = getCobrancaTXID(comanda.getIdQRCodePix().get(comanda.getIdQRCodePix().size() - 1), detalhesPagamento, idRestaurante);
-        Map<String, Object> result = getDetalhesDeCobranca(detalhesPagamento, idRestaurante, txid);
-        return new CobrancaDetailsDto(result);
+        ExecutorService executor = Executors.newFixedThreadPool(comanda.getIdQRCodePix().size());
+        List<GetCobrancaDetailsUseCase> usecases =
+                comanda
+                .getIdQRCodePix()
+                .stream()
+                .map(
+                        idCobranca -> new GetCobrancaDetailsUseCase(idCobranca, detalhesPagamento, idRestaurante)
+                ).toList();
+        List<Future<CobrancaDetailsDto>> results;
+        try {
+            results = executor.invokeAll(usecases);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao conseguir os detalhes de cobrança");
+        }
+        executor.shutdown();
+        return results.stream().map(cobrancaDetailsDtoFuture -> {
+            try {
+                return cobrancaDetailsDtoFuture.get();
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao conseguir os detalhes de cobrança");
+            }
+        }).toList();
     }
 
     private Integer realizarPagamento(

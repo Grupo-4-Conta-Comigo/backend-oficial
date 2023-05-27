@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 public class Pagamento {
     @Id
     private String id;
-
     private String idRestaurante;
     private String chavePix;
     private double valorPagamento;

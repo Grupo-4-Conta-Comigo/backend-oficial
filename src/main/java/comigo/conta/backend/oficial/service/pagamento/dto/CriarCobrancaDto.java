@@ -3,7 +3,7 @@ package comigo.conta.backend.oficial.service.pagamento.dto;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 
-public class CriarPagamentoDto {
+public class CriarCobrancaDto {
     @NotBlank
     private String idRestaurante;
     @NotBlank

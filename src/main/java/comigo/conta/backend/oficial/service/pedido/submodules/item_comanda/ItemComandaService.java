@@ -73,7 +73,7 @@ public class ItemComandaService {
         List<ItemComandaDoPedido> itensComandaDoPedido = new ArrayList<>();
         for (final var comanda : pedido.getComandas()) {
             for (final var itemComanda : comanda.getItensComanda()) {
-                itensComandaDoPedido.add(new ItemComandaDoPedido(itemComanda.getId(), itemComanda.getObservacao(), comanda.getNomeDono(), itemComanda.getProduto()));
+                itensComandaDoPedido.add(new ItemComandaDoPedido(itemComanda.getId(), comanda.getId(), itemComanda.getObservacao(), comanda.getNomeDono(), itemComanda.getProduto()));
             }
         }
         return itensComandaDoPedido;

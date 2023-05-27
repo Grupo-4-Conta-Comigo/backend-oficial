@@ -1,6 +1,5 @@
 package comigo.conta.backend.oficial.service.calculo;
 
-import comigo.conta.backend.oficial.service.calculo.dto.CalculoPersonaliazdoPaganteDto;
 import comigo.conta.backend.oficial.service.calculo.dto.CalculoPersonalizadoRequestDto;
 import comigo.conta.backend.oficial.service.calculo.dto.CalculoPersonalizadoResponseDto;
 import org.springframework.http.HttpStatus;
@@ -12,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingDouble;
-
 @Service
 public class CalculoService {
 
@@ -22,16 +18,18 @@ public class CalculoService {
             CalculoPersonalizadoRequestDto calculoPersonalizadoRequestDto
     ) {
         Map<String, Double> pagantes = new HashMap<>();
+        Map<String, String> idComandas = new HashMap<>();
         double somaPagantes = 0;
         for (final var item : calculoPersonalizadoRequestDto.getItens()) {
             for (final var pagante : item.getPagantes()) {
                 somaPagantes += Math.round(pagante.getValorAPagar() * 100);
                 pagantes.merge(pagante.getNome(), pagante.getValorAPagar(), Double::sum);
+                idComandas.putIfAbsent(pagante.getNome(), pagante.getIdComanda());
             }
         }
         List<CalculoPersonalizadoResponseDto> response = new ArrayList<>();
         for (final var entry : pagantes.entrySet()) {
-            response.add(new CalculoPersonalizadoResponseDto(entry.getKey(), entry.getValue()));
+            response.add(new CalculoPersonalizadoResponseDto(idComandas.get(entry.getKey()), entry.getKey(), entry.getValue()));
         }
         if (somaPagantes != Math.round(calculoPersonalizadoRequestDto.getValorTotal() * 100)) {
             throw new ResponseStatusException(
@@ -44,18 +42,5 @@ public class CalculoService {
             );
         }
         return response;
-    }
-
-    public List<CalculoPersonalizadoResponseDto> calcularPersonalizadoIlegivel(
-            CalculoPersonalizadoRequestDto calculoPersonalizadoRequestDto
-    ) {
-        return calculoPersonalizadoRequestDto.getItens()
-                .stream()
-                .flatMap(item -> item.getPagantes().stream())
-                .collect(groupingBy(CalculoPersonaliazdoPaganteDto::getNome, summingDouble(CalculoPersonaliazdoPaganteDto::getValorAPagar)))
-                .entrySet()
-                .stream()
-                .map(entry -> new CalculoPersonalizadoResponseDto(entry.getKey(), entry.getValue()))
-                .toList();
     }
 }

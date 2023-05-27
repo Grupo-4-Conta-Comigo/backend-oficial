@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 
 public class CalculoPersonaliazdoPaganteDto {
     @NotBlank
+    private String idComanda;
+    @NotBlank
     private String nome;
     @DecimalMin("0")
     @NotNull
@@ -25,5 +27,13 @@ public class CalculoPersonaliazdoPaganteDto {
 
     public void setValorAPagar(double valorAPagar) {
         this.valorAPagar = valorAPagar;
+    }
+
+    public String getIdComanda() {
+        return idComanda;
+    }
+
+    public void setIdComanda(String idComanda) {
+        this.idComanda = idComanda;
     }
 }

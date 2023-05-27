@@ -1,9 +1,11 @@
 package comigo.conta.backend.oficial.api.controller.pagamento;
 
+import comigo.conta.backend.oficial.domain.pagamento.Pagamento;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.service.pagamento.RealizarPagamentosService;
 import comigo.conta.backend.oficial.service.pagamento.dto.CobrancaDetailsDto;
 import comigo.conta.backend.oficial.service.pagamento.dto.CriarCobrancaDto;
+import comigo.conta.backend.oficial.service.pagamento.dto.CriarPagamentoDto;
 import comigo.conta.backend.oficial.service.pagamento.dto.GetQRCodeDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,7 @@ public class RealizarPagamentoController {
     @PutMapping("/criar-cobranca")
     public ResponseEntity<Comanda> criarCobranca(@RequestBody @Validated CriarCobrancaDto criarCobrancaDto) {
         return ok(
-                realizarPagamentosService.criarPagamento(
+                realizarPagamentosService.criarCobranca(
                         criarCobrancaDto.getIdRestaurante(),
                         criarCobrancaDto.getIdComanda(),
                         criarCobrancaDto.getValor()
@@ -59,11 +61,13 @@ public class RealizarPagamentoController {
         );
     }
 
-//    @PostMapping("/criar/{idRestaurante}")
-//    public ResponseEntity<Pagamento> confirmarpagamento(
-//            @PathVariable String idRestaurante,
-//            @RequestBody @Validated CriarPagamento
-//    ) {
-//
-//    }
+    @PostMapping("/criar/{idRestaurante}")
+    public ResponseEntity<Pagamento> confirmarpagamento(
+            @PathVariable String idRestaurante,
+            @RequestBody @Validated CriarPagamentoDto criarPagamentoDto
+    ) {
+        return ok(
+                realizarPagamentosService.cadastrarPagamento(criarPagamentoDto)
+        );
+    }
 }

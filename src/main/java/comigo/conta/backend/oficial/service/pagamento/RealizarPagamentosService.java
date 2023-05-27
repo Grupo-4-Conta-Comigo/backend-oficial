@@ -4,8 +4,12 @@ import br.com.gerencianet.gnsdk.Gerencianet;
 import br.com.gerencianet.gnsdk.exceptions.GerencianetException;
 import com.mifmif.common.regex.Generex;
 import comigo.conta.backend.oficial.domain.pagamento.DetalhesPagamento;
+import comigo.conta.backend.oficial.domain.pagamento.Pagamento;
+import comigo.conta.backend.oficial.domain.pagamento.repository.PagamentoRepository;
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
+import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.pagamento.dto.CobrancaDetailsDto;
+import comigo.conta.backend.oficial.service.pagamento.dto.CriarPagamentoDto;
 import comigo.conta.backend.oficial.service.pagamento.usecases.GetCobrancaDetailsUseCase;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
 import comigo.conta.backend.oficial.service.usuario.UsuarioService;
@@ -18,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,16 +34,20 @@ import java.util.concurrent.Future;
 
 @Service
 public class RealizarPagamentosService {
+    private final PagamentoRepository repository;
     private final CertificadoPagamentoService certificadoPagamentoService;
     private final GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService;
     private final UsuarioService usuarioService;
     private final ComandaService comandaService;
+    private final GenerateRandomIdUsecase generateRandomIdUsecase;
 
-    public RealizarPagamentosService(CertificadoPagamentoService certificadoPagamentoService, GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService, UsuarioService usuarioService, ComandaService comandaService) {
+    public RealizarPagamentosService(PagamentoRepository repository, CertificadoPagamentoService certificadoPagamentoService, GerenciaDetalhesPagamentoService gerenciaDetalhesPagamentoService, UsuarioService usuarioService, ComandaService comandaService, GenerateRandomIdUsecase generateRandomIdUsecase) {
+        this.repository = repository;
         this.certificadoPagamentoService = certificadoPagamentoService;
         this.gerenciaDetalhesPagamentoService = gerenciaDetalhesPagamentoService;
         this.usuarioService = usuarioService;
         this.comandaService = comandaService;
+        this.generateRandomIdUsecase = generateRandomIdUsecase;
     }
 
     public boolean realizarPagamentoParaTeste(String idRestaurante) {
@@ -56,7 +65,7 @@ public class RealizarPagamentosService {
         );
     }
 
-    public Comanda criarPagamento(String idRestaurante, String idComanda, double valor) {
+    public Comanda criarCobranca(String idRestaurante, String idComanda, double valor) {
         DetalhesPagamento detalhesPagamento = getDetalhesPagamentoOrThrow404(idRestaurante);
         criarArquivoSeNaoExiste(idRestaurante, detalhesPagamento);
         UsuarioNomeDocumentoDto usuario = getUsuarioNomeDocumentoOrThrow404(idRestaurante);
@@ -185,69 +194,6 @@ public class RealizarPagamentosService {
         }
 
     }
-
-    private String getCobrancaTXID(
-            Integer idCobranca,
-            DetalhesPagamento detalhesPagamento,
-            String idRestaurante
-    ) {
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("client_id", detalhesPagamento.getClientId());
-        options.put("client_secret", detalhesPagamento.getClientSecret());
-        options.put("certificate", certificadoPagamentoService.getRealCertificadoPath(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("id", String.valueOf(idCobranca));
-
-        try {
-            Gerencianet gn = new Gerencianet(options);
-            Map<String, Object> response = gn.call("pixDetailLocation", params, new HashMap<>());
-            System.out.println(response);
-            return response.get("txid").toString();
-        } catch (GerencianetException e) {
-            System.out.println(e.getError());
-            System.out.println(e.getErrorDescription());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.valueOf(e.getCode()), e.getMessage());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Aconteceu um erro ao conseguir o txid da cobrança");
-        }
-    }
-
-    private Map<String, Object> getDetalhesDeCobranca(
-            DetalhesPagamento detalhesPagamento,
-            String idRestaurante,
-            String txid
-    ) {
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("client_id", detalhesPagamento.getClientId());
-        options.put("client_secret", detalhesPagamento.getClientSecret());
-        options.put("certificate", certificadoPagamentoService.getRealCertificadoPath(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("txid", txid);
-
-        try {
-            Gerencianet gn = new Gerencianet(options);
-            Map<String, Object> response = gn.call("pixDetailDueCharge", params, new HashMap<>());
-            System.out.println(response);
-            return response;
-        } catch (GerencianetException e) {
-            System.out.println(e.getError());
-            System.out.println(e.getErrorDescription());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.valueOf(e.getCode()), e.getMessage());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Aconteceu um erro ao conseguir os detalhes da cobrança");
-        }
-    }
-
     private UsuarioNomeDocumentoDto getUsuarioNomeDocumentoOrThrow404(String idRestaurante) {
         return usuarioService
                 .findNomeDocumentoById(idRestaurante)
@@ -272,5 +218,21 @@ public class RealizarPagamentosService {
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Detalhes de Pagamento não encontrados")
                 );
+    }
+
+    public Pagamento cadastrarPagamento(CriarPagamentoDto criarPagamentoDto) {
+        if (usuarioService.naoExiste(criarPagamentoDto.getIdRestaurante())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurante não encontrado...");
+        }
+        Pagamento pagamento = new Pagamento();
+        pagamento.setIdRestaurante(criarPagamentoDto.getIdRestaurante());
+        pagamento.setChavePix(criarPagamentoDto.getChavePix());
+        pagamento.setValorPagamento(criarPagamentoDto.getValorPagamento());
+        pagamento.setPagamentoConcluido(criarPagamentoDto.isPagamentoConcluido());
+        pagamento.setFoiUsadoPix(criarPagamentoDto.isPix());
+        pagamento.setDataHoraPagamento(LocalDateTime.now());
+        pagamento.setId(generateRandomIdUsecase.execute());
+
+        return repository.save(pagamento);
     }
 }

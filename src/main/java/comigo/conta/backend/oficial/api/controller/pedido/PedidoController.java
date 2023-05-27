@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.http.ResponseEntity.*;
+
 @RestController
 @RequestMapping("/pedidos")
 @Tag(name = "Pedidos", description = "Grupo de requisições de Pedidos")
@@ -57,7 +59,7 @@ public class PedidoController {
             @RequestBody @Validated PedidoCriacaoDto pedidoCriacaoDto,
             @PathVariable String idRestaurante
     ) {
-        return ResponseEntity.status(201).body(
+        return status(201).body(
                 new PedidoResponseDto(
                         this.pedidoService.criar(pedidoCriacaoDto, idRestaurante)
                 )
@@ -96,8 +98,8 @@ public class PedidoController {
     ) {
         final var pedidos = pedidoService.getAll(idRestaurante, ativos, orderByOldest);
         return pedidos.isEmpty() ?
-                ResponseEntity.status(204).build() :
-                ResponseEntity.ok(pedidosToPedidosResponse(pedidos));
+                status(204).build() :
+                ok(pedidosToPedidosResponse(pedidos));
     }
 
 
@@ -120,7 +122,7 @@ public class PedidoController {
     })
     @GetMapping("/{idPedido}")
     public ResponseEntity<PedidoResponseDto> getPedidoById(@PathVariable String idPedido) {
-        return ResponseEntity.of(
+        return of(
                 pedidoService.getById(idPedido)
                 .map(PedidoResponseDto::new)
         );
@@ -148,7 +150,7 @@ public class PedidoController {
             @PathVariable String idRestaurante,
             @RequestParam("ativos") Optional<Boolean> ativos
     ) {
-        return ResponseEntity.ok(pedidoService.count(idRestaurante, ativos));
+        return ok(pedidoService.count(idRestaurante, ativos));
     }
 
     @ApiResponses({
@@ -170,7 +172,7 @@ public class PedidoController {
     })
     @GetMapping("/preco/{idPedido}")
     public ResponseEntity<Double> getPreco(@PathVariable String idPedido) {
-        return ResponseEntity.ok(pedidoService.getPreco(idPedido));
+        return ok(pedidoService.getPreco(idPedido));
     }
 
     @ApiResponses({
@@ -195,7 +197,7 @@ public class PedidoController {
             @PathVariable String idPedido,
             @RequestBody @Validated PedidoUpdateDto pedidoCriacaoDto
     ) {
-        return ResponseEntity.ok(
+        return ok(
                 new PedidoResponseDto(
                         pedidoService.editar(idPedido, pedidoCriacaoDto)
                 )
@@ -219,9 +221,35 @@ public class PedidoController {
                     content = @Content(schema = @Schema(hidden = true))
             ),
     })
+    @PatchMapping("/fechar/{idPedido}")
+    public ResponseEntity<PedidoResponseDto> finalizar(@PathVariable String idPedido) {
+        return ok(
+                new PedidoResponseDto(
+                        pedidoService.fechar(idPedido)
+                )
+        );
+    }
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @PatchMapping("/finalizar/{idPedido}")
     public ResponseEntity<PedidoResponseDto> finzalizar(@PathVariable String idPedido) {
-        return ResponseEntity.ok(
+        return ok(
                 new PedidoResponseDto(
                         pedidoService.finalizar(idPedido)
                 )
@@ -248,7 +276,7 @@ public class PedidoController {
     @DeleteMapping("/deletar/{idPedido}")
     public ResponseEntity<Void> remover(@PathVariable String idPedido) {
         pedidoService.deletar(idPedido);
-        return ResponseEntity.status(200).build();
+        return status(200).build();
     }
 
     private List<PedidoResponseDto> pedidosToPedidosResponse(List<Pedido> pedidos) {

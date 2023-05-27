@@ -116,4 +116,10 @@ public class PedidoService {
             throw new ResponseStatusException(404, "Pedido não encontrado...", null);
         }
     }
+
+    public Pedido fechar(String idPedido) {
+        Pedido pedido = getPedidoOrElseThrow(idPedido);
+        pedido.setStatus(Status.fechado);
+        return repository.save(pedido);
+    }
 }

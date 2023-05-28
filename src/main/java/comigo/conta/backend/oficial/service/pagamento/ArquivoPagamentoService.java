@@ -49,6 +49,7 @@ public class ArquivoPagamentoService {
         final String hoje = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         final Usuario restaurante = usuarioService.getUsuarioOrThrow404(idRestaurante);
         final String nomeArquivo = restaurante.getNome().replace(" ", "-").concat("-relatiorio-").concat(hoje).concat(".txt");
+        apagarArquivoSeExiste(nomeArquivo);
         int contadorReg = 0;
         final String header =
                 "00RECEITA ESTABELECIMENTO"
@@ -98,6 +99,11 @@ public class ArquivoPagamentoService {
         gravarRegistro(trailer, nomeArquivo);
 
         return new File(nomeArquivo);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void apagarArquivoSeExiste(String nomeArquivo) {
+        new File(nomeArquivo).delete();
     }
 
     public void lerArquivoTxt(MultipartFile arquivoTxt, String idRestaurante) {

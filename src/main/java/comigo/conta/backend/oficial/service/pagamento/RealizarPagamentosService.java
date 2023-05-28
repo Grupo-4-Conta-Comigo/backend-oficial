@@ -23,10 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -100,11 +97,11 @@ public class RealizarPagamentosService {
         ExecutorService executor = Executors.newFixedThreadPool(comanda.getIdQRCodePix().size());
         List<GetCobrancaDetailsUseCase> usecases =
                 comanda
-                .getIdQRCodePix()
-                .stream()
-                .map(
-                        idCobranca -> new GetCobrancaDetailsUseCase(idCobranca, detalhesPagamento, idRestaurante)
-                ).toList();
+                        .getIdQRCodePix()
+                        .stream()
+                        .map(
+                                idCobranca -> new GetCobrancaDetailsUseCase(idCobranca, detalhesPagamento, idRestaurante)
+                        ).toList();
         List<Future<CobrancaDetailsDto>> results;
         try {
             results = executor.invokeAll(usecases);
@@ -194,6 +191,7 @@ public class RealizarPagamentosService {
         }
 
     }
+
     private UsuarioNomeDocumentoDto getUsuarioNomeDocumentoOrThrow404(String idRestaurante) {
         return usuarioService
                 .findNomeDocumentoById(idRestaurante)
@@ -226,6 +224,8 @@ public class RealizarPagamentosService {
         }
         Pagamento pagamento = new Pagamento();
         pagamento.setIdRestaurante(criarPagamentoDto.getIdRestaurante());
+        pagamento.setNumeroMesa(criarPagamentoDto.getNumeroMesa());
+        pagamento.setNomePagante(criarPagamentoDto.getNomePagante());
         pagamento.setChavePix(criarPagamentoDto.getChavePix());
         pagamento.setValorPagamento(criarPagamentoDto.getValorPagamento());
         pagamento.setPagamentoConcluido(criarPagamentoDto.isPagamentoConcluido());
@@ -234,5 +234,20 @@ public class RealizarPagamentosService {
         pagamento.setId(generateRandomIdUsecase.execute());
 
         return repository.save(pagamento);
+    }
+
+    public List<Pagamento> getTodosPagamentos(
+            String idRestaurante,
+            Optional<Integer> quantidade
+    ) {
+        if (usuarioService.naoExiste(idRestaurante)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurante não encontrado");
+        }
+        if (quantidade.isEmpty()) {
+            return repository.findByIdRestaurante(idRestaurante);
+        }
+        return repository.findByIdRestauranteOrderByDataHoraPagamentoDesc(
+                idRestaurante
+        );
     }
 }

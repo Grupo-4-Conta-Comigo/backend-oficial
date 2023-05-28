@@ -1,5 +1,7 @@
 package comigo.conta.backend.oficial.domain.shared.object_utils.fila;
 
+import java.util.List;
+
 public class Fila<T> {
     private final T[] fila;
     private int tamanho;
@@ -7,6 +9,14 @@ public class Fila<T> {
     public Fila(int size) {
         this.fila = (T[]) new Object[size];
         this.tamanho = 0;
+    }
+
+    public Fila(List<T> list) {
+        this.fila = (T[]) new Object[list.size()];
+        this.tamanho = 0;
+        for (final var item : list) {
+            insert(item);
+        }
     }
 
     public void insert(T info) {

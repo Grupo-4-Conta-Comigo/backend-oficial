@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -53,7 +54,7 @@ public class RealizarPagamentoController {
             @PathVariable String idComanda,
             @PathVariable String idRestaurante
     ) {
-        return ok(
+        return listToResponseEntity(
                 realizarPagamentosService.getCobrancaDetails(
                         idRestaurante,
                         idComanda
@@ -68,5 +69,19 @@ public class RealizarPagamentoController {
         return ok(
                 realizarPagamentosService.cadastrarPagamento(criarPagamentoDto)
         );
+    }
+
+    @GetMapping("/todos/{idRestaurante}")
+    public ResponseEntity<List<Pagamento>> getTodosPagamentos(
+            @PathVariable String idRestaurante,
+            @RequestParam Optional<Integer> quantidade
+    ) {
+        return listToResponseEntity(
+                realizarPagamentosService.getTodosPagamentos(idRestaurante, quantidade)
+        );
+    }
+
+    private <T> ResponseEntity<List<T>> listToResponseEntity(List<T> response) {
+        return response.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
     }
 }

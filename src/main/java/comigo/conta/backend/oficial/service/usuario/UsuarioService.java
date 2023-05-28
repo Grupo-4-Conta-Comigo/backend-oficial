@@ -8,6 +8,7 @@ import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioLoginDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioTokenDto;
 import comigo.conta.backend.oficial.service.usuario.dto.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -141,5 +142,13 @@ public class UsuarioService {
             throw new ResponseStatusException(404, "Garçom não encontrado!", null);
         }
         repository.deleteById(idGarcom);
+    }
+
+    public Usuario getUsuarioOrThrow404(String idUsuario) {
+        return repository
+                .findById(idUsuario)
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado")
+                );
     }
 }

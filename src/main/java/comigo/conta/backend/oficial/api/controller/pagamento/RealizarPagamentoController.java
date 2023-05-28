@@ -61,9 +61,8 @@ public class RealizarPagamentoController {
         );
     }
 
-    @PostMapping("/criar/{idRestaurante}")
+    @PostMapping("/criar")
     public ResponseEntity<Pagamento> confirmarpagamento(
-            @PathVariable String idRestaurante,
             @RequestBody @Validated CriarPagamentoDto criarPagamentoDto
     ) {
         return ok(

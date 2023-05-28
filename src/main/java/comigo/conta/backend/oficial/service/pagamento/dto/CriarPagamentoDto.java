@@ -2,6 +2,8 @@ package comigo.conta.backend.oficial.service.pagamento.dto;
 
 public class CriarPagamentoDto {
     private String idRestaurante;
+    private int numeroMesa;
+    private String nomePagante;
     private String chavePix;
     private double valorPagamento;
     private boolean pagamentoConcluido;
@@ -45,5 +47,21 @@ public class CriarPagamentoDto {
 
     public void setPix(boolean pix) {
         this.pix = pix;
+    }
+
+    public String getNomePagante() {
+        return nomePagante;
+    }
+
+    public void setNomePagante(String nomePagante) {
+        this.nomePagante = nomePagante;
+    }
+
+    public int getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(int numeroMesa) {
+        this.numeroMesa = numeroMesa;
     }
 }

@@ -9,6 +9,8 @@ public class Pagamento {
     @Id
     private String id;
     private String idRestaurante;
+    private int numeroMesa;
+    private String nomePagante;
     private String chavePix;
     private double valorPagamento;
     private boolean pagamentoConcluido;
@@ -69,5 +71,21 @@ public class Pagamento {
 
     public void setFoiUsadoPix(boolean foiUsadoPix) {
         this.foiUsadoPix = foiUsadoPix;
+    }
+
+    public String getNomePagante() {
+        return nomePagante;
+    }
+
+    public void setNomePagante(String nomePagante) {
+        this.nomePagante = nomePagante;
+    }
+
+    public int getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(int numeroMesa) {
+        this.numeroMesa = numeroMesa;
     }
 }

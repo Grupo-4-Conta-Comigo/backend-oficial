@@ -71,10 +71,14 @@ public class PedidoService {
 
     public Long count(String idRestaurante, Optional<Boolean> ativos) {
         verificaRestauranteExiste(idRestaurante);
-        if (ativos.isPresent()) {
-            return repository.countByIdRestauranteAndStatus(idRestaurante, ativos.get() ? Status.ativo : Status.finalizado);
-        }
-        return repository.countByIdRestaurante(idRestaurante);
+        return ativos.map(
+                isAtivo -> !isAtivo ?
+                        repository.countByIdRestauranteAndStatus(idRestaurante, Status.finalizado) :
+                        Long.sum(
+                                repository.countByIdRestauranteAndStatus(idRestaurante, Status.ativo),
+                                repository.countByIdRestauranteAndStatus(idRestaurante, Status.fechado)
+                        )
+        ).orElseGet(() -> repository.countByIdRestaurante(idRestaurante));
     }
 
     public Pedido editar(String idPedido, PedidoUpdateDto pedidoUpdateDto) {

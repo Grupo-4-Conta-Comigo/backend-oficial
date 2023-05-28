@@ -124,6 +124,25 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> getAll(@PathVariable String idRestaurante) {
         return listToResponseEntity(usuarioService.findGarconsByRestauranteId(idRestaurante));
     }
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),@ApiResponse(
+            responseCode = "403",
+            content = @Content(schema = @Schema(hidden = true))
+    ),@ApiResponse(
+            responseCode = "404",
+            content = @Content(schema = @Schema(hidden = true))
+    ),
+    })
+    @GetMapping("/{idRestaurante}")
+    public ResponseEntity<Usuario> getbyId(@PathVariable String idRestaurante) {
+        return ResponseEntity.ok(usuarioService.getUsuarioOrThrow404(idRestaurante));
+    }
 
     @ApiResponses({
             @ApiResponse(

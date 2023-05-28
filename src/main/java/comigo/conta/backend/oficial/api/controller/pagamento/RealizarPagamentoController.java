@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -73,11 +72,10 @@ public class RealizarPagamentoController {
 
     @GetMapping("/todos/{idRestaurante}")
     public ResponseEntity<List<Pagamento>> getTodosPagamentos(
-            @PathVariable String idRestaurante,
-            @RequestParam Optional<Integer> quantidade
+            @PathVariable String idRestaurante
     ) {
         return listToResponseEntity(
-                realizarPagamentosService.getTodosPagamentos(idRestaurante, quantidade)
+                realizarPagamentosService.getTodosPagamentos(idRestaurante)
         );
     }
 

@@ -237,17 +237,11 @@ public class RealizarPagamentosService {
     }
 
     public List<Pagamento> getTodosPagamentos(
-            String idRestaurante,
-            Optional<Integer> quantidade
+            String idRestaurante
     ) {
         if (usuarioService.naoExiste(idRestaurante)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurante não encontrado");
         }
-        if (quantidade.isEmpty()) {
-            return repository.findByIdRestaurante(idRestaurante);
-        }
-        return repository.findByIdRestauranteOrderByDataHoraPagamentoDesc(
-                idRestaurante
-        );
+        return repository.findTop2ByIdRestauranteOrderByDataHoraPagamentoDesc(idRestaurante);
     }
 }

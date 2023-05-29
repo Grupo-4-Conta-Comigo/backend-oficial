@@ -172,13 +172,20 @@ public class ArquivoPagamentoService {
     private void salvarNovoPagamento(String registro, String idRestaurante) {
         System.out.println(registro);
         String idPagamento = generateRandomIdUsecase.execute();
-        String chavePix = registro.substring(2, 42).trim();
-        double valorTotal = Double.parseDouble(registro.substring(42, 52).replace(',', '.'));
-        boolean isPagamentoConcluido = Boolean.parseBoolean(registro.substring(52, 57));
-        LocalDateTime dataHoraPagamento = LocalDateTime.parse(registro.substring(57, 76));
+        String nomePagante = registro.substring(2, 22).trim();
+        System.out.println("Nome Pagante: " + nomePagante);
+        int numeroMesa = Integer.parseInt(registro.substring(22, 24).trim());
+        System.out.println("Numero mesa: " + numeroMesa);
+        String chavePix = registro.substring(24, 64).trim();
+        System.out.println("Chave Pix: " + chavePix);
+        double valorTotal = Double.parseDouble(registro.substring(64, 74).replace(',', '.'));
+        boolean isPagamentoConcluido = Boolean.parseBoolean(registro.substring(74, 79));
+        LocalDateTime dataHoraPagamento = LocalDateTime.parse(registro.substring(79, 98));
         Pagamento pagamento = new Pagamento();
         pagamento.setId(idPagamento);
         pagamento.setIdRestaurante(idRestaurante);
+        pagamento.setNomePagante(nomePagante);
+        pagamento.setNumeroMesa(numeroMesa);
         pagamento.setChavePix(chavePix);
         pagamento.setValorPagamento(valorTotal);
         pagamento.setPagamentoConcluido(isPagamentoConcluido);

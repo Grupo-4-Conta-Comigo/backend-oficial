@@ -16,7 +16,8 @@ public class Usuario {
     private String email;
     private String senha;
     private String restauranteId;
-
+//    @OneToMany
+//    private List<MesaQRCode> qrCodes;
     public String getNome() {
         return nome;
     }

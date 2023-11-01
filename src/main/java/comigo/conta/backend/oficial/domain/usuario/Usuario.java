@@ -16,7 +16,7 @@ public class Usuario {
     private String email;
     private String senha;
     private String restauranteId;
-
+    private String webhookUrl;
     public String getNome() {
         return nome;
     }
@@ -71,5 +71,13 @@ public class Usuario {
 
     public void setRestauranteId(String restauranteId) {
         this.restauranteId = restauranteId;
+    }
+
+    public String getWebhookUrl() {
+        return webhookUrl;
+    }
+
+    public void setWebhookUrl(String webhookUrl) {
+        this.webhookUrl = webhookUrl;
     }
 }

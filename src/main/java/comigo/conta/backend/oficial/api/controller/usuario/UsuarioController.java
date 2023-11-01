@@ -5,10 +5,12 @@ import comigo.conta.backend.oficial.domain.usuario.Usuario;
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioLoginDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.RestauranteMudarSenhaDto;
 import comigo.conta.backend.oficial.service.autenticacao.dto.UsuarioTokenDto;
+import comigo.conta.backend.oficial.service.usuario.IntegracaoMobileService;
 import comigo.conta.backend.oficial.service.usuario.UsuarioService;
 import comigo.conta.backend.oficial.service.usuario.dto.GarcomCriacaoDto;
 import comigo.conta.backend.oficial.service.usuario.dto.GarcomEdicaoDto;
 import comigo.conta.backend.oficial.service.usuario.dto.RestauranteCriacaoDto;
+import comigo.conta.backend.oficial.service.usuario.dto.WebhookDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,6 +24,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Optional;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -29,9 +34,11 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final IntegracaoMobileService integracaoMobileService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, IntegracaoMobileService integracaoMobileService) {
         this.usuarioService = usuarioService;
+        this.integracaoMobileService = integracaoMobileService;
     }
 
     @ApiResponses({
@@ -112,36 +119,17 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "401",
                     content = @Content(schema = @Schema(hidden = true))
-            ),@ApiResponse(
-                    responseCode = "403",
-                    content = @Content(schema = @Schema(hidden = true))
-            ),@ApiResponse(
-                    responseCode = "404",
-                    content = @Content(schema = @Schema(hidden = true))
-            ),
-    })
-    @GetMapping("/garcons/todos/{idRestaurante}")
-    public ResponseEntity<List<Usuario>> getAll(@PathVariable String idRestaurante) {
-        return listToResponseEntity(usuarioService.findGarconsByRestauranteId(idRestaurante));
-    }
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200"
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    content = @Content(schema = @Schema(hidden = true))
-            ),@ApiResponse(
+            ), @ApiResponse(
             responseCode = "403",
             content = @Content(schema = @Schema(hidden = true))
-    ),@ApiResponse(
+    ), @ApiResponse(
             responseCode = "404",
             content = @Content(schema = @Schema(hidden = true))
     ),
     })
-    @GetMapping("/{idRestaurante}")
-    public ResponseEntity<Usuario> getbyId(@PathVariable String idRestaurante) {
-        return ResponseEntity.ok(usuarioService.getUsuarioOrThrow404(idRestaurante));
+    @GetMapping("/garcons/todos/{idRestaurante}")
+    public ResponseEntity<List<Usuario>> getAll(@PathVariable String idRestaurante) {
+        return listToResponseEntity(usuarioService.findGarconsByRestauranteId(idRestaurante));
     }
 
     @ApiResponses({
@@ -151,13 +139,33 @@ public class UsuarioController {
             @ApiResponse(
                     responseCode = "401",
                     content = @Content(schema = @Schema(hidden = true))
-            ),@ApiResponse(
-                    responseCode = "403",
-                    content = @Content(schema = @Schema(hidden = true))
-            ),@ApiResponse(
-                    responseCode = "404",
-                    content = @Content(schema = @Schema(hidden = true))
+            ), @ApiResponse(
+            responseCode = "403",
+            content = @Content(schema = @Schema(hidden = true))
+    ), @ApiResponse(
+            responseCode = "404",
+            content = @Content(schema = @Schema(hidden = true))
+    ),
+    })
+    @GetMapping("/{idRestaurante}")
+    public ResponseEntity<Usuario> getbyId(@PathVariable String idRestaurante) {
+        return ok(usuarioService.getUsuarioOrThrow404(idRestaurante));
+    }
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
             ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ), @ApiResponse(
+            responseCode = "403",
+            content = @Content(schema = @Schema(hidden = true))
+    ), @ApiResponse(
+            responseCode = "404",
+            content = @Content(schema = @Schema(hidden = true))
+    ),
     })
     @GetMapping("/garcons/{idGarcom}")
     public ResponseEntity<Usuario> getGarcom(@PathVariable String idGarcom) {
@@ -190,7 +198,7 @@ public class UsuarioController {
             @PathVariable String idGarcom,
             @RequestBody @Validated GarcomEdicaoDto garcomEdicaoDto
     ) {
-        return ResponseEntity.ok(usuarioService.editarGarcom(garcomEdicaoDto, idGarcom));
+        return ok(usuarioService.editarGarcom(garcomEdicaoDto, idGarcom));
     }
 
     @ApiResponses({
@@ -254,6 +262,14 @@ public class UsuarioController {
         return login(restauranteLoginNovoDto);
     }
 
+    @PutMapping("/{restauranteId}/webhook")
+    public ResponseEntity<WebhookDto> bindWebhook(
+            @PathVariable String restauranteId,
+            @RequestBody @Validated WebhookDto dto
+    ) {
+        return ok(integracaoMobileService.bindWebhook(restauranteId, Optional.ofNullable(dto.getWebhookUrl())));
+    }
+
     private void gravaArquivoCsv(RestauranteCriacaoDto restaurante) {
         try (
                 final FileWriter arq = new FileWriter(AppStrings.NOME_ARQUIVO_CSV, true);
@@ -267,6 +283,6 @@ public class UsuarioController {
     }
 
     private ResponseEntity<List<Usuario>> listToResponseEntity(List<Usuario> usuarios) {
-        return usuarios.isEmpty() ? ResponseEntity.status(204).build() : ResponseEntity.ok(usuarios);
+        return usuarios.isEmpty() ? ResponseEntity.status(204).build() : ok(usuarios);
     }
 }

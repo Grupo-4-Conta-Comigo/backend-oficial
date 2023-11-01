@@ -24,18 +24,13 @@ public class GetCobrancaDetailsUseCase implements Callable<CobrancaDetailsDto> {
     }
 
     @Override
-    public CobrancaDetailsDto call() throws Exception {
+    public CobrancaDetailsDto call() {
         final String txid = getTXID();
-        final Map<String, Object> result = getDetalhesDeCobranca(detalhesPagamento, idRestaurante, txid);
-        return new CobrancaDetailsDto(result);
+        return getDetalhesDeCobranca(txid);
     }
 
     private String getTXID() {
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("client_id", detalhesPagamento.getClientId());
-        options.put("client_secret", detalhesPagamento.getClientSecret());
-        options.put("certificate", CertificadoPagamentoService.getRealCertificadoPathStatic(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
+        HashMap<String, Object> options = configureClientDetails();
 
         HashMap<String, String> params = new HashMap<>();
         params.put("id", String.valueOf(idCobranca));
@@ -57,16 +52,9 @@ public class GetCobrancaDetailsUseCase implements Callable<CobrancaDetailsDto> {
         }
     }
 
-    private Map<String, Object> getDetalhesDeCobranca(
-            DetalhesPagamento detalhesPagamento,
-            String idRestaurante,
-            String txid
-    ) {
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("client_id", detalhesPagamento.getClientId());
-        options.put("client_secret", detalhesPagamento.getClientSecret());
-        options.put("certificate", CertificadoPagamentoService.getRealCertificadoPathStatic(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
+    private CobrancaDetailsDto getDetalhesDeCobranca(String txid) {
+
+        HashMap<String, Object> options = configureClientDetails();
 
         HashMap<String, String> params = new HashMap<>();
         params.put("txid", txid);
@@ -75,7 +63,7 @@ public class GetCobrancaDetailsUseCase implements Callable<CobrancaDetailsDto> {
             Gerencianet gn = new Gerencianet(options);
             Map<String, Object> response = gn.call("pixDetailDueCharge", params, new HashMap<>());
             System.out.println(response);
-            return response;
+            return new CobrancaDetailsDto(response);
         } catch (GerencianetException e) {
             System.out.println(e.getError());
             System.out.println(e.getErrorDescription());
@@ -86,5 +74,15 @@ public class GetCobrancaDetailsUseCase implements Callable<CobrancaDetailsDto> {
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Aconteceu um erro ao conseguir os detalhes da cobrança");
         }
+    }
+
+    private HashMap<String, Object> configureClientDetails() {
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("client_id", detalhesPagamento.getClientId());
+        options.put("client_secret", detalhesPagamento.getClientSecret());
+        options.put("certificate", CertificadoPagamentoService.getRealCertificadoPathStatic(idRestaurante, detalhesPagamento.getNomeCertificado()));
+        options.put("sandbox", false);
+
+        return options;
     }
 }

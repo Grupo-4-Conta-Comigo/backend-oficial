@@ -24,10 +24,9 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+
+import static javax.xml.bind.DatatypeConverter.*;
 
 @Service
 public class RealizarPagamentosService {
@@ -127,11 +126,7 @@ public class RealizarPagamentosService {
             String cpf,
             double valor
     ) {
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("client_id", detalhesPagamento.getClientId());
-        options.put("client_secret", detalhesPagamento.getClientSecret());
-        options.put("certificate", certificadoPagamentoService.getRealCertificadoPath(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
+        HashMap<String, Object> options = configureOptions(detalhesPagamento, idRestaurante);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("txid", new Generex("[a-zA-Z0-9]{26,35}").random());
@@ -161,16 +156,21 @@ public class RealizarPagamentosService {
         }
     }
 
-    private byte[] criarQRCode(
-            Integer idCobranca,
-            String idRestaurante,
-            DetalhesPagamento detalhesPagamento
-    ) {
+    private HashMap<String, Object> configureOptions(DetalhesPagamento detalhesPagamento, String idRestaurante) {
         HashMap<String, Object> options = new HashMap<>();
         options.put("client_id", detalhesPagamento.getClientId());
         options.put("client_secret", detalhesPagamento.getClientSecret());
         options.put("certificate", certificadoPagamentoService.getRealCertificadoPath(idRestaurante, detalhesPagamento.getNomeCertificado()));
         options.put("sandbox", false);
+        return options;
+    }
+
+    private byte[] criarQRCode(
+            Integer idCobranca,
+            String idRestaurante,
+            DetalhesPagamento detalhesPagamento
+    ) {
+        HashMap<String, Object> options = configureOptions(detalhesPagamento, idRestaurante);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("id", String.valueOf(idCobranca));
@@ -178,7 +178,7 @@ public class RealizarPagamentosService {
         try {
             Gerencianet gn = new Gerencianet(options);
             Map<String, Object> response = gn.call("pixGenerateQRCode", params, new HashMap<>());
-            return new ByteArrayInputStream(javax.xml.bind.DatatypeConverter.parseBase64Binary(((String) response.get("imagemQrcode")).split(",")[1])).readAllBytes();
+            return new ByteArrayInputStream(parseBase64Binary(((String) response.get("imagemQrcode")).split(",")[1])).readAllBytes();
         } catch (GerencianetException e) {
             System.out.println(e.getError());
             System.out.println(e.getErrorDescription());

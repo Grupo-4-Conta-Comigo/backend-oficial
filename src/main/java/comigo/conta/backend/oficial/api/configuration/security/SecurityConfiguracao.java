@@ -53,6 +53,7 @@ public class SecurityConfiguracao {
                         "/usuarios/**",
                         "/restaurantes/criar",
                         "/restaurantes/login",
+                        "/mobile/clientes/**",
                         "/h2-console/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",

@@ -6,7 +6,10 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.qrcode.QRCodeWriter;
 import comigo.conta.backend.oficial.domain.shared.constants.AppStrings;
 import comigo.conta.backend.oficial.domain.usuario.repository.UsuarioRepository;
+import comigo.conta.backend.oficial.service.mobile.dtos.ItemGenerico;
+import comigo.conta.backend.oficial.service.mobile.dtos.PedidoGenerico;
 import comigo.conta.backend.oficial.service.usuario.dto.WebhookDto;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +24,7 @@ import java.util.Optional;
 
 import static java.net.http.HttpRequest.BodyPublishers;
 import static java.net.http.HttpRequest.newBuilder;
+import static java.net.http.HttpResponse.*;
 
 @Service
 public class IntegracaoMobileService {
@@ -80,6 +84,43 @@ public class IntegracaoMobileService {
 
     }
 
+    public PedidoGenerico getPedido(String restauranteId, int mesa) {
+        final var restaurante = usuarioService.getUsuarioOrThrow404(restauranteId);
+        final var webhook = restaurante.getWebhookUrl();
+
+        if (Objects.isNull(webhook)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Usuario precisa de um webhook cadastrado para poder fazer as coisas funfarem"
+            );
+        }
+
+        final var requestEndpoint = String.format("%s/mesa/%d", webhook, mesa);
+        final var response = sendPedidosRequest(requestEndpoint);
+        if (response.statusCode() != 200) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Seu servidor responseu com um erro."
+            );
+        }
+
+        final var jsonObject = new JSONObject(response.body());
+        final var itensJson = jsonObject.getJSONArray("itens");
+        final var itens = itensJson.toList()
+                .stream()
+                .map(Object::toString)
+                .map(JSONObject::new)
+                .map(jsonObject1 -> new ItemGenerico(
+                                jsonObject.getString("nome"),
+                                jsonObject1.getDouble("preco"),
+                                jsonObject1.getInt("quantidade"),
+                                jsonObject1.getString("observacao")
+                        )
+                )
+                .toList();
+        return new PedidoGenerico(mesa, itens);
+    }
+
     private HttpResponse<String> createHttpRequest(String webhook) {
         final var httpClient = HttpClient.newHttpClient();
         final var request = newBuilder(URI.create(webhook))
@@ -88,10 +129,27 @@ public class IntegracaoMobileService {
                 .build();
 
         try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return httpClient.send(request, BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
+                    "Seu servidor responseu com um erro."
+            );
+        }
+    }
+
+    private HttpResponse<String> sendPedidosRequest(String webhook) {
+        final var httpClient = HttpClient.newHttpClient();
+        final var request = newBuilder(URI.create(webhook))
+                .header("accept", "application/json")
+                .GET()
+                .build();
+
+        try {
+            return httpClient.send(request, BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
                     "Seu servidor responseu com um erro."
             );
         }

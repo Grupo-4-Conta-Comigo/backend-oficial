@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Clientes")
 @AllArgsConstructor
 public class ClienteController {
-    private ClienteService clienteService;
+    private final ClienteService clienteService;
 
     @ApiResponses({
             @ApiResponse(

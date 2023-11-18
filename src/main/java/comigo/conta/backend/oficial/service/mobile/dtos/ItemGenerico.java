@@ -2,9 +2,11 @@ package comigo.conta.backend.oficial.service.mobile.dtos;
 
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
-@ToString
-public record ItemGenerico(String nome, double preco, int quantidade, String observacao) {
+@Data
+@AllArgsConstructor
+public class ItemGenerico {
+    private String nome;
+    private double preco;
+    private int quantidade;
+    private String observacao;
 }

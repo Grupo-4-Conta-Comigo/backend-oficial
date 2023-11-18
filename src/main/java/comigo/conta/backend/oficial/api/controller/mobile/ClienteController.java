@@ -38,6 +38,27 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
     @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<ClienteTokenDto> login(@RequestBody @Validated ClienteLoginDto clienteLoginDto) {

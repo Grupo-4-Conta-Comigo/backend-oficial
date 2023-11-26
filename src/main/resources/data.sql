@@ -1,7 +1,7 @@
 insert into usuario
-    (id, nome, registro, cargo, email, senha)
+    (id, nome, registro, cargo, email, senha, webhookUrl)
 values
-    ('1b1d6bca-7566-44f0-b8d3-08145522c3e2', 'Restaurante Conta Comigo', '70353298000107', 0, 'conta.comigo@email.com', '$2a$10$0/TKTGxdREbWaWjWYhwf6e9P1fPOAMMNqEnZgOG95jnSkHSfkkIrC');
+    ('1b1d6bca-7566-44f0-b8d3-08145522c3e2', 'Restaurante Conta Comigo', '70353298000107', 0, 'conta.comigo@email.com', '$2a$10$0/TKTGxdREbWaWjWYhwf6e9P1fPOAMMNqEnZgOG95jnSkHSfkkIrC', 'https://6557e86bbd4bcef8b6133deb.mockapi.io');
 insert into produto
     (nome, categoria, preco, id_restaurante)
 values

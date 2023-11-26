@@ -59,6 +59,13 @@ public class IntegracaoMobileService {
 
     }
 
+    public WebhookDto getWebhook(String restauranteId) {
+        final var user = usuarioService.getUsuarioOrThrow404(restauranteId);
+        final var webhookDto = new WebhookDto();
+        webhookDto.setWebhookUrl(user.getWebhookUrl());
+        return webhookDto;
+    }
+
 
     public BufferedImage generateQRCodeToTable(
             String restauranteId,

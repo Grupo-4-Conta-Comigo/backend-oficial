@@ -269,6 +269,31 @@ public class UsuarioController {
     ) {
         return ok(integracaoMobileService.bindWebhook(restauranteId, Optional.ofNullable(dto.getWebhookUrl())));
     }
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+    })
+    @GetMapping("/{restauranteId}/webhook")
+    public ResponseEntity<WebhookDto> getWebhook(@PathVariable String restauranteId) {
+        return ok(integracaoMobileService.getWebhook(restauranteId));
+    }
 
     private void gravaArquivoCsv(RestauranteCriacaoDto restaurante) {
         try (

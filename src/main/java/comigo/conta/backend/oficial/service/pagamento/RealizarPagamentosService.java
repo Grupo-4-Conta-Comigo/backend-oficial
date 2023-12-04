@@ -9,6 +9,7 @@ import comigo.conta.backend.oficial.domain.pagamento.repository.PagamentoReposit
 import comigo.conta.backend.oficial.domain.pedido.submodules.comanda.Comanda;
 import comigo.conta.backend.oficial.domain.shared.usecases.GenerateRandomIdUsecase;
 import comigo.conta.backend.oficial.service.pagamento.dto.CobrancaDetailsDto;
+import comigo.conta.backend.oficial.service.pagamento.dto.CopiaColaDto;
 import comigo.conta.backend.oficial.service.pagamento.dto.CriarPagamentoDto;
 import comigo.conta.backend.oficial.service.pagamento.usecases.GetCobrancaDetailsUseCase;
 import comigo.conta.backend.oficial.service.pedido.submodules.comanda.ComandaService;
@@ -161,7 +162,7 @@ public class RealizarPagamentosService {
         options.put("client_id", detalhesPagamento.getClientId());
         options.put("client_secret", detalhesPagamento.getClientSecret());
         options.put("certificate", certificadoPagamentoService.getRealCertificadoPath(idRestaurante, detalhesPagamento.getNomeCertificado()));
-        options.put("sandbox", false);
+        options.put("sandbox", true);
         return options;
     }
 
@@ -243,5 +244,38 @@ public class RealizarPagamentosService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurante não encontrado");
         }
         return repository.findTop2ByIdRestauranteOrderByDataHoraPagamentoDesc(idRestaurante);
+    }
+
+    public CopiaColaDto getCopiaCola(String idRestaurante, double valor) {
+        final var config = configureOptions(getDetalhesPagamentoOrThrow404(idRestaurante), idRestaurante);
+        final var cobrancaId = realizarPagamento(
+                getDetalhesPagamentoOrThrow404(idRestaurante),
+                idRestaurante,
+                "Rafael Reis",
+                "",
+                valor
+        );
+        return requisicaoCopiaCola(cobrancaId, config);
+    }
+
+    private CopiaColaDto requisicaoCopiaCola(Integer cobrancaId, HashMap<String, Object> options) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("id", String.valueOf(cobrancaId));
+
+        try {
+            Gerencianet gn = new Gerencianet(options);
+            Map<String, Object> response = gn.call("pixGenerateQRCode", params, new HashMap<>());
+            System.out.println(response);
+            return CopiaColaDto.fromJson(response);
+        } catch (GerencianetException e) {
+            System.out.println(e.getError());
+            System.out.println(e.getErrorDescription());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.valueOf(e.getCode()), e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Aconteceu um erro ao realizar o pagamento");
+        }
     }
 }

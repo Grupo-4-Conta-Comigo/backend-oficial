@@ -99,8 +99,7 @@ public class RealizarPagamentosService {
                 comanda
                         .getIdQRCodePix()
                         .stream()
-                        .map(
-                                idCobranca -> new GetCobrancaDetailsUseCase(idCobranca, detalhesPagamento, idRestaurante)
+                        .map(idCobranca -> new GetCobrancaDetailsUseCase(idCobranca, detalhesPagamento, idRestaurante)
                         ).toList();
         List<Future<CobrancaDetailsDto>> results;
         try {
